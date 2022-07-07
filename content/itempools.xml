@@ -1,0 +1,8 @@
+<ItemPools>
+	<Pool Name="shop">
+		<Item Name="Pill Crusher" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+	</Pool>
+	<Pool Name="greedShop">
+		<Item Name="Pill Crusher" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+	</Pool>
+</ItemPools>

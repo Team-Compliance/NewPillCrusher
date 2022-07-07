@@ -1,0 +1,3 @@
+<items gfxroot="gfx/items/" version="1">
+	<active name="Pill Crusher" description="Give them to everyone!" gfx="collectibles_648_pillcrusher.png" quality="1" tags="offensive nocantrip" />
+</items>

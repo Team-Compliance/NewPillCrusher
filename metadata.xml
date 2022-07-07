@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <name>Pill Crusher</name>
+    <directory>pill crusher</directory>
+    <description>An active item. On activation, Pill Crusher consumes a currently held pill in exchange for a unique, room-wide effect.
+
+[img]https://i.imgur.com/tp9LIOS.png[/img]
+
+[h1]𝐏𝐢𝐥𝐥 𝐂𝐫𝐮𝐬𝐡𝐞𝐫[/h1] 
+[img]https://i.imgur.com/s8p1E9N.png[/img]
+- Spawns a pill on pickup [img]https://i.imgur.com/sT3pHdw.png[/img]
+- Has a chance of spawning a pill when entering a room [img]https://i.imgur.com/Nu5eYIG.png[/img]
+- Item pools = Shop &amp; Greed Shop [img]https://i.imgur.com/rdneVtO.png[/img]
+- [url=https://docs.google.com/spreadsheets/d/1zoq-cSHnVaXqVTW0ZYhApjPYlgWi1qZNCFbsaqmePyg/edit?usp=sharing]Pill Effects spreadsheet[/url]
+[list]
+[*]Full EID support
+[/list]
+[u]___________________________________[/u]
+
+𝐂𝐨𝐦𝐢𝐧𝐠 𝐒𝐨𝐨𝐧:
+
+- Encyclopdedia support
+- Abyss synergy
+- Probably some value tweaking 
+
+[img]https://i.imgur.com/0YXOqPH.png[/img]
+[list]
+[*][u]𝐃𝐢𝐫𝐞𝐜𝐭𝐨𝐫 𝐚𝐧𝐝 𝐆𝐫𝐚𝐩𝐡𝐢𝐜 𝐃𝐞𝐬𝐢𝐠𝐧𝐞𝐫[/u] = Sillst
+[*][u]𝐏𝐫𝐨𝐠𝐫𝐚𝐦𝐦𝐞𝐫𝐬[/u] = Akad, kittenchilly
+[*][u]𝐒𝐩𝐫𝐢𝐭𝐞𝐫[/u] = Michael¿?
+[*][u]𝐓𝐫𝐚𝐧𝐬𝐥𝐚𝐭𝐨𝐫𝐬[/u] = Kotry, BrakeDude
+[*][u]𝐏𝐥𝐚𝐲𝐭𝐞𝐬𝐭𝐞𝐫𝐬[/u] = Akad, Sillst, kittenchilly, Kotry
+[/list]
+
+[img]https://i.imgur.com/3en8OyU.png[/img]
+[code]Aether, Akad, anchikai., Blind the Bound Demon, Blixy, BrakeDude, cat,,, Ethereal, Firework, fly_6, Goncholito, jubbalub, kittenchilly, Luigi_Gamer124, Merlin, Michael¿?, Royal, Sillst, skippy, 24Chrome[/code]
+
+[img]https://i.imgur.com/SlXbHql.png[/img] [img]https://i.imgur.com/xd2eafr.png[/img]
+[code][u]_Kilburn[/u] - For the original item idea
+[u]All of you[/u] - For checking us out and supporting us :)[/code]
+
+[img]https://i.imgur.com/GKVOZZ8.png[/img]
+
+[img]https://i.imgur.com/xK4Mor0.png[/img] [url=https://discord.gg/GdVnkV4Gwj]TBOI: Compliance Discord Server[/url] [img]https://i.imgur.com/xK4Mor0.png[/img]
+[img]https://i.imgur.com/69jZFo8.png[/img] [url=https://www.reddit.com/r/TBOICompliance/]TBOI: Compliance Subreddit[/url] [img]https://i.imgur.com/69jZFo8.png[/img]
+[img]https://i.imgur.com/GmVPmG0.png[/img] [url=https://www.youtube.com/channel/UCEdAioGltx_hOsyDW57nvSw/featured]TBOI: Compliance YouTube[/url] [img]https://i.imgur.com/GmVPmG0.png[/img]
+[img]https://i.imgur.com/jBFg02x.png[/img] [url=https://twitter.com/ComplianceMods]Compliance Twitter Account[/url] [img]https://i.imgur.com/jBFg02x.png[/img]
+
+[img]https://i.imgur.com/DVq7svp.png[/img]</description>
+    <version>1.0</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Items"/>
+    <tag id="Active Items"/>
+    <tag id="Pills"/>
+</metadata>

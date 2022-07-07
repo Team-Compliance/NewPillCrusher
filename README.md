@@ -1,2 +1,56 @@
-# NewPillCrusher
-Reworked Pill Crusher
+# To-do list
+- Pill Crusher rework
+  - ??? pills get their names revealed after using the item on them. Splash text also appears when a pill is crushed
+
+  - Effects
+    - Bad Gas = Enemies fart poisonous gas and take damage. The poisonous gas will harm the player if they stand in it for too long. Horse pill: poison deals 3 + half player damage --done
+    - Bad Trip = Enemies get 30HP removed from them. Horse pill: removes 1/3 of current hp or kills if enemy is under 30 hp and not boss. --done
+    - Balls of Steel =
+    - Bombs are Key = All bombs in a room are converted into keys and vice versa. Horse pill: pickups convert into double packs. --done
+    - Explosive Diarrhea = Enemies fart out troll bombs
+    - Full Health = Enemies get healed to full HP
+    - Health Down = Enemies get 15HP removed from them
+    - Health Up = Enemeis gain 15HP
+    - I Found Pills =
+    - Puberty =
+    - Pretty Fly =
+    - Range Down = Enemies get a range down effect
+    - Range Up = Enemies get a range up effect
+    - Speed Down = Enemies get a speed down effect
+    - Speed Up = Enemies get a speed up effect
+    - Tears Down Enemies get a tears down effect
+    - Tears Up = Enemies get a tears up effect
+    - Luck Down =
+    - Luck Up =
+    - Telepills =
+    - 48 Hour Energy =
+    - Hematemesis =
+    - Paralysis = All enemies in the room get paralyzed =
+    - I can see forever! =
+    - Pheromones =
+    - Amnesia =
+    - Lemon Party =
+    - R U a wizard? =
+    - Percs! = Enemies take half damage 
+    - Addicted! = 
+    - Re-lax =
+    - ??? =
+    - One makes you larger = Enemies get larger. Their hitboxes don't increase
+    - One makes you small = Enemies get smaller. Their hitboxes shrink
+    - Infested! =
+    - Infested? =
+    - Power Pill! =
+    - Retro Vision =
+    - Friends Till The End! =
+    - X-Lax =
+    - Something's wrong... =
+    - I'm Drowsy... =
+    - I'm Excited!!! =
+    - Gulp! = All trinkets in a room are gulped into the player's inventory 
+    - Horf! =
+    - Feels like I'm walking on sunshine! =
+    - Vurp! = 
+    - Shot Speed Down = Enemies get a shot speed down effect
+    - Shot Speed Up = Enemies get a shot speed up effect
+    - Experimental Pill = Random pill crusher effect
+    
