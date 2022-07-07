@@ -96,7 +96,7 @@ local function BadGas(p,pillcolor,itempool,enemies)
 		Game():GetHUD():ShowItemText("Bad Gas")
 		for _,enemy in ipairs(enemies) do
 			local cloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SMOKE_CLOUD, 0, enemy.Position, Vector.Zero, enemy):ToEffect()
-			local multi = pillcolor > 2048 and 2 or 1
+			local multi = pillcolor > 2047 and 2 or 1
 			cloud.LifeSpan = 180 / multi
 			enemy:AddPoison(EntityRef(p), 60 * multi, 3 + p.Damage / 2 * (multi - 1))
 		end
@@ -108,14 +108,31 @@ local function BadTrip(p,pillcolor,itempool,enemies)
 		Game():GetHUD():ShowItemText("Bad Trip")
 		for _,enemy in ipairs(enemies) do
 			local damage = 30
-			if pillcolor > 2048 then damage = math.max(30,enemy.HitPoints / 3) end
-			enemy:AddHealth(damage)
+			if pillcolor > 2047 then damage = math.max(30,enemy.HitPoints / 3) end
+			enemy:AddHealth(-damage)
+		end
+	end
+end
+
+local function HPUP(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEALTH_UP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Health Up")
+		for _,enemy in ipairs(enemies) do
+			enemy:AddHealth(15)
+		end
+	end
+end
+
+local function HPDOWN(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEALTH_DOWN or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Health Down")
+		for _,enemy in ipairs(enemies) do
+			enemy:AddHealth(-15)
 		end
 	end
 end
 
 function mod:use_pillcrusher(boi, rng, p, slot, data)
-	--for i, e in pairs(Isaac.FindByType(EntityType.ENTITY_PLAYER, 0, -1, false, false)) do; local p = e:ToPlayer();
 	local pillcolor = p:GetPill(0)
 	if pillcolor == 0 then return false end
 	local itempool = Game():GetItemPool()
@@ -128,6 +145,8 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 	end
 	BadGas(p, pillcolor, itempool,enemies)
 	BadTrip(p, pillcolor, itempool,enemies)
+	HPDOWN(p, pillcolor, itempool,enemies)
+	HPUP(p, pillcolor, itempool,enemies)
 	BombsAreKey(p, pillcolor, itempool)
 	
 	if pillcolor ~= 0 then
@@ -136,7 +155,6 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 	end
 	SFXManager():Play(462, 1, 2, false, 1, 0)
 	return true
-	--end
 end
 mod:AddCallback(ModCallbacks.MC_USE_ITEM, mod.use_pillcrusher, CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 
