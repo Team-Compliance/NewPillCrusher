@@ -107,9 +107,8 @@ local function BadTrip(p,pillcolor,itempool,enemies)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BAD_TRIP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Bad Trip")
 		for _,enemy in ipairs(enemies) do
-			local damage = 30
-			if pillcolor > 2047 then damage = math.max(30,enemy.HitPoints / 3) end
-			enemy:AddHealth(-damage)
+			local mult = pillcolor > 2047 and 2 or 1
+			enemy:TakeDamage(math.min(30 * mult,enemy.HitPoints/(3 + 1 - mult)), DamageFlag.DAMAGE_LASER, EntityRef(p),0)
 		end
 	end
 end
@@ -118,7 +117,9 @@ local function HPUP(p,pillcolor,itempool,enemies)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEALTH_UP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Health Up")
 		for _,enemy in ipairs(enemies) do
-			enemy:AddHealth(15)
+			local mult = pillcolor > 2047 and 2 or 1
+			enemy.MaxHitPoints = enemy.MaxHitPoints + 15 * mult
+			enemy.HitPoints = enemy.HitPoints + 15 * mult
 		end
 	end
 end
@@ -127,7 +128,9 @@ local function HPDOWN(p,pillcolor,itempool,enemies)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEALTH_DOWN or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Health Down")
 		for _,enemy in ipairs(enemies) do
-			enemy:AddHealth(-15)
+			local mult = pillcolor > 2047 and 2 or 1
+			enemy.MaxHitPoints = enemy.MaxHitPoints - math.min(15 * mult,enemy.MaxHitPoints / (2 - 0.5 * (-1 + mult)))
+			enemy.HitPoints = enemy.HitPoints - math.min(15 * mult,enemy.HitPoints / (2 - 0.5 * (-1 + mult)))
 		end
 	end
 end
