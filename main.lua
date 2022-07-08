@@ -108,7 +108,7 @@ local function BadTrip(p,pillcolor,itempool,enemies)
 		Game():GetHUD():ShowItemText("Bad Trip")
 		for _,enemy in ipairs(enemies) do
 			local mult = pillcolor > 2047 and 2 or 1
-			enemy:TakeDamage(math.min(30 * mult,enemy.HitPoints/(3 + 1 - mult)), DamageFlag.DAMAGE_LASER, EntityRef(p),0)
+			enemy:TakeDamage(enemy.HitPoints / (10 / mult), DamageFlag.DAMAGE_LASER, EntityRef(p),0)
 		end
 	end
 end
