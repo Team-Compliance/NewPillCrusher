@@ -4,13 +4,13 @@
 
   - Effects
     - Bad Gas = Enemies fart poisonous gas and take damage. The poisonous gas will harm the player if they stand in it for too long. Horse pill: poison deals 3 + half player damage --done
-    - Bad Trip = Enemies get 30HP removed from them. Horse pill: removes 1/3 of current hp or kills if enemy is under 30 hp and not boss. --done
+    - Bad Trip = Enemies take 1/10 of current damage. Horse pill: removes 1/5 of current hp. --done
     - Balls of Steel =
     - Bombs are Key = All bombs in a room are converted into keys and vice versa. Horse pill: pickups convert into double packs. --done
     - Explosive Diarrhea = Enemies fart out troll bombs
     - Full Health = Enemies get healed to full HP
-    - Health Down = Enemies get 15HP removed from them
-    - Health Up = Enemeis gain 15HP
+    - Health Down = Enemies get 15HP removed from them (30 with horse pill). If HP is lower than 15 (30) then it removes half of current hp (~= 67% of current hp) --done
+    - Health Up = Enemeis gain 15HP (30 with horse pill) --done
     - I Found Pills =
     - Puberty =
     - Pretty Fly =
