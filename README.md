@@ -12,8 +12,8 @@
     - Health Down = Enemies get 15HP removed from them (30 with horse pill). If HP is lower than 15 (30) then it removes half of current hp (~= 67% of current hp) --done
     - Health Up = Enemeis gain 15HP (30 with horse pill) --done
     - I Found Pills = Nothing, gives Isaac a different face
-    - Puberty = 
-    - Pretty Fly =
+    - Puberty = Enemies become random champion variants
+    - Pretty Fly = Enemies get a fly orbital
     - Range Down = Enemies get a range down effect
     - Range Up = Enemies get a range up effect
     - Speed Down = Enemies get a speed down effect
