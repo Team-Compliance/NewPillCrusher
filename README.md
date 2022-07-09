@@ -22,7 +22,7 @@
     - Tears Up = Enemies get a tears up effect
     - Luck Down =
     - Luck Up =
-    - Telepills =
+    - Telepills = Teleports all enemies in a room to a different room
     - 48 Hour Energy =
     - Hematemesis =
     - Paralysis = All enemies in the room get paralyzed =
@@ -41,9 +41,9 @@
     - Infested? =
     - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds.
     - Retro Vision =
-    - Friends Till The End! = Enemies become friendly temporarily
+    - Friends Till The End! = Flies spawn after an enemy is killed
     - X-Lax =
-    - Something's wrong... =
+    - Something's wrong... = 
     - I'm Drowsy... = Isaac slows down like Death would do him in boss fight
     - I'm Excited!!! = Make Isaac faster (but since it would be bs to control we just apply slowdown to everything like Afterbirth+ pre-nerf Stopwatch)
     - Gulp! = All trinkets in a room are gulped into the player's inventory 
