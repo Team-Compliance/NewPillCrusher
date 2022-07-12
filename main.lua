@@ -6,13 +6,12 @@ CollectibleType.COLLECTIBLE_PILL_CRUSHER = Isaac.GetItemIdByName("Pill Crusher")
 local rangedown = 0
 local luckdown = 0
 local tearsdown = 0
+local DrowsyExited = 0
 
 local PCDesc = "Gives a random {{Pill}} pill when picked up#Increase pill drop rate when held#Consumes currently held pill and applies an effect to the entire room depending on the type of pill"
 local PCDescSpa = "Otorga una {{Pill}} pildora aleatoria al tomarlo#Las pildoras aparecen con mas frecuencia#Consume la pildora que posees y aplica un efecto a la sala, basado en la pildora"
 local PCDescRu = "Дает случайную {{Pill}} пилюлю#Увеличивает шанс появления пилюль#Использует текущую пилюлю и накладывает зависимый от её типа эффект на всю комнату"
 local PCDescPt_Br = "Gere uma pílula {{Pill}} aleatória quando pego#Almente a taxa de queda de pílulas# Consome a pílula segurada e aplique um efeito na sala inteira dependendo no tipo de pílula"
-
-local BadGasClouds = {}
 
 if EID then
 	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDesc, "Pill Crusher", "en_us")
@@ -21,8 +20,19 @@ if EID then
 	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDesc, "Triturador de Pílula", "pt_br")
 end
 
+local function GetData(entity)
+	if entity and entity.GetData then
+		local data = entity:GetData()
+		if not data.PillCrusher then
+			data.PillCrusher = {}
+		end
+		return data
+	end
+	return nil
+end
+
 function mod:AddPill(player)
-    local data = player:GetData()
+    local data = GetData(player)
     data.pilldrop = data.pilldrop or player:GetCollectibleNum(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 
     if data.pilldrop < player:GetCollectibleNum(CollectibleType.COLLECTIBLE_PILL_CRUSHER) then
@@ -135,6 +145,124 @@ local function HPDOWN(p,pillcolor,itempool,enemies)
 	end
 end
 
+local function FTTE(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_FRIENDS_TILL_THE_END or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Friends till the end!")
+		local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+		for _,enemy in ipairs(enemies) do
+			local data = GetData(enemy)
+			data.SpawnFliesOnDeath = { Fly = pillcolor > 2047 and mod:GetRandomNumber(1, 3, rng) or 1, Parent = p}
+		end
+	end
+end
+
+function mod:FliesOnDeath(entity)
+	local data = GetData(entity)
+	if data.SpawnFliesOnDeath then
+		for i = 1, data.SpawnFliesOnDeath.Fly do
+			local fly = Isaac.Spawn(EntityType.ENTITY_FAMILIAR,FamiliarVariant.BLUE_FLY,0,entity.Position,Vector.Zero,data.SpawnFliesOnDeath.Parent)
+			fly:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+		end		
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, mod.FliesOnDeath)
+
+
+local function FullHealth(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_FULL_HEALTH or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Full health")
+		for _,enemy in ipairs(enemies) do
+			enemy.HitPoints = enemy.MaxHitPoints
+		end
+	end
+end
+
+local function ImExited(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_IM_EXCITED or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("I'm excited!!!")
+		DrowsyExited = 1
+	end
+end
+
+local function ImDrowsy(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_IM_DROWSY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("I'm drowsy...")
+		DrowsyExited = pillcolor > 2047 and 4 or 2
+		for _,p in ipairs(Isaac.FindByType(EntityType.ENTITY_PLAYER)) do
+			p = p:ToPlayer()
+			p:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
+			p:EvaluateItems()
+		end
+	end
+end
+
+function mod:SlowFastRoom()
+	if DrowsyExited == 1 then
+		Game():GetRoom():SetBrokenWatchState(DrowsyExited)
+	elseif DrowsyExited == 2 or DrowsyExited == 4 then
+		for _,p in ipairs(Isaac.FindByType(EntityType.ENTITY_PLAYER)) do
+			p:AddSlowing(EntityRef(nil),1,0.8 / DrowsyExited,Color(1,1,1,1))
+		end
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_UPDATE, mod.SlowFastRoom)
+
+function mod:SlowFastRoomFireRate(p,cache)
+	if DrowsyExited ~= 1 then
+		p.MaxFireDelay = p.MaxFireDelay * (1 + 0.25 * DrowsyExited)
+	end
+end
+mod:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, mod.SlowFastRoomFireRate, CacheFlag.CACHE_FIREDELAY)
+
+function mod:SlowFastRoomReset()
+	if DrowsyExited > 0 then
+		DrowsyExited = 0
+		for _,p in ipairs(Isaac.FindByType(EntityType.ENTITY_PLAYER)) do
+			p = p:ToPlayer()
+			p:ClearEntityFlags(EntityFlag.FLAG_SLOW)
+			p:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
+			p:EvaluateItems()
+		end
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.SlowFastRoomReset)
+
+local function BallsOfSteel(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BALLS_OF_STEEL or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Balls of Steel")
+		for _,enemy in ipairs(enemies) do
+			local mult = pillcolor > 2047 and 1.5 or 3
+			local data = GetData(enemy)
+			data.Armor = enemy.MaxHitPoints / mult
+		end
+	end
+end
+
+function mod:BallsOfSteelArmor(e, damage, flags, source, cd)
+	local data = GetData(e)
+	if data.Armor then
+		if data.Armor > 0 then
+			data.Armor = data.Armor - damage
+		else
+			local leftover = data.Armor
+			data.Armor = nil
+			e:TakeDamage(damage+leftover,flags,source,cd)
+		end
+		return false
+	end
+end
+mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, mod.BallsOfSteelArmor)
+
+function mod:BallsOfSteelArmorIndicator(npc)
+	local data = GetData(npc)
+	if data.Armor then
+		local color = Color(1,1,1,1)
+		color:SetColorize(0,0,0.6,0.35)
+		npc:GetSprite().Color = color
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, mod.BallsOfSteelArmorIndicator)
+
 function mod:use_pillcrusher(boi, rng, p, slot, data)
 	local pillcolor = p:GetPill(0)
 	if pillcolor == 0 then return false end
@@ -142,7 +270,7 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 	local enemies = {}
 	for _,enemy in ipairs(Isaac.GetRoomEntities()) do
 		enemy = enemy:ToNPC()
-		if enemy and enemy:IsActiveEnemy() and enemy:IsEnemy() then
+		if enemy and enemy:IsVulnerableEnemy() and enemy:IsActiveEnemy() and enemy:IsEnemy() then
 			table.insert(enemies,enemy)
 		end
 	end
@@ -150,7 +278,13 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 	BadTrip(p, pillcolor, itempool,enemies)
 	HPDOWN(p, pillcolor, itempool,enemies)
 	HPUP(p, pillcolor, itempool,enemies)
+	FTTE(p, pillcolor, itempool,enemies)
+	FullHealth(p, pillcolor, itempool,enemies)
+	BallsOfSteel(p, pillcolor, itempool,enemies)
 	BombsAreKey(p, pillcolor, itempool)
+	ImExited(p, pillcolor, itempool)
+	ImDrowsy(p, pillcolor, itempool)
+	
 	
 	if pillcolor ~= 0 then
 		itempool:IdentifyPill(pillcolor)
@@ -238,7 +372,7 @@ function mod:GetRandomNumber(numMin, numMax, rng)
 	if numMin and numMax then
 		return rng:Next() % (numMax - numMin + 1) + numMin
 	elseif numMax then
-		return rng:Next() % numMin
+		return rng:Next() % numMax
 	end
 	return rng:Next()
 end
