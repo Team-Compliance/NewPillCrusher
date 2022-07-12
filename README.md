@@ -29,11 +29,11 @@
     - I can see forever! =
     - Pheromones =
     - Amnesia =
-    - Lemon Party =
+    - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player
     - R U a wizard? =
     - Percs! = Enemies take half damage 
     - Addicted! = Enemies get double damage
-    - Re-lax =
+    - Re-lax = Enemies spawn poop wherever they walk for a few seconds
     - ??? = Enemies get confusion
     - One makes you larger = Enemies get larger. Their hitboxes don't increase
     - One makes you small = Enemies get smaller. Their hitboxes shrink
@@ -42,8 +42,8 @@
     - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds.
     - Retro Vision =
     - Friends Till The End! = Flies spawn after an enemy is killed --done
-    - X-Lax =
-    - Something's wrong... = 
+    - X-Lax = Creates a pool of slippery brown creep under every enemy
+    - Something's wrong... = A pool of black creep spawns under every enemy that slows down Isaac and enemies
     - I'm Drowsy... = Isaac slows down like Death would do him in boss fight --done
     - I'm Excited!!! = Make Isaac faster (but since it would be bs to control we just apply slowdown to everything like Afterbirth+ pre-nerf Stopwatch) --done
     - Gulp! = All trinkets in a room are gulped into the player's inventory 
@@ -53,4 +53,3 @@
     - Shot Speed Down = Enemies get a shot speed down effect
     - Shot Speed Up = Enemies get a shot speed up effect
     - Experimental Pill = Random pill crusher effect
-    
