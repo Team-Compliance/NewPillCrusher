@@ -25,14 +25,14 @@
     - Telepills = Teleports all enemies in a room to a different room
     - 48 Hour Energy =
     - Hematemesis =
-    - Paralysis = All enemies in the room get paralyzed =
+    - Paralysis = All enemies in the room get paralyzed = --done
     - I can see forever! =
     - Pheromones =
     - Amnesia =
     - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player
     - R U a wizard? =
     - Percs! = Enemies take half damage 
-    - Addicted! = Enemies get double damage
+    - Addicted! = Enemies get double damage --done
     - Re-lax = Enemies spawn poop wherever they walk for a few seconds
     - ??? = Enemies get confusion
     - One makes you larger = Enemies get larger. Their hitboxes don't increase

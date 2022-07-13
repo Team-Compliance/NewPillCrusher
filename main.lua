@@ -238,7 +238,40 @@ local function BallsOfSteel(p,pillcolor,itempool,enemies)
 	end
 end
 
-function mod:BallsOfSteelArmor(e, damage, flags, source, cd)
+function mod:BallsOfSteelArmorIndicator(npc)
+	local data = GetData(npc)
+	if data.Armor then
+		local color = Color(1,1,1,1)
+		color:SetColorize(0,0,0.6,0.35)
+		npc:GetSprite().Color = color
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, mod.BallsOfSteelArmorIndicator)
+
+
+local function Paralysis(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PARALYSIS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Paralysis")
+		local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+		for _,enemy in ipairs(enemies) do
+			local mult = pillcolor > 2047 and 2 or 1
+			enemy:AddFreeze(EntityRef(p),mod:GetRandomNumber(60,90,rng) * mult)
+		end
+	end
+end
+
+local function Addicted(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_ADDICTED or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Addicted!")
+		for _,enemy in ipairs(enemies) do
+			local mult = pillcolor > 2047 and 1.5 or 3
+			local data = GetData(enemy)
+			data.DoubleDamage = pillcolor > 2047 and 2 or 1.3
+		end
+	end
+end
+
+function mod:DamageEffects(e, damage, flags, source, cd)
 	local data = GetData(e)
 	if data.Armor then
 		if data.Armor > 0 then
@@ -250,18 +283,17 @@ function mod:BallsOfSteelArmor(e, damage, flags, source, cd)
 		end
 		return false
 	end
-end
-mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, mod.BallsOfSteelArmor)
-
-function mod:BallsOfSteelArmorIndicator(npc)
-	local data = GetData(npc)
-	if data.Armor then
-		local color = Color(1,1,1,1)
-		color:SetColorize(0,0,0.6,0.35)
-		npc:GetSprite().Color = color
+	if data.DoubleDamage then
+		if data.TookDD ~= true then
+			data.TookDD = true
+			e:TakeDamage(damage*data.DoubleDamage,flags,source,cd)
+			return false
+		else
+			data.TookDD = nil
+		end
 	end
 end
-mod:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, mod.BallsOfSteelArmorIndicator)
+mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, mod.DamageEffects)
 
 function mod:use_pillcrusher(boi, rng, p, slot, data)
 	local pillcolor = p:GetPill(0)
@@ -281,6 +313,8 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 	FTTE(p, pillcolor, itempool,enemies)
 	FullHealth(p, pillcolor, itempool,enemies)
 	BallsOfSteel(p, pillcolor, itempool,enemies)
+	Paralysis(p, pillcolor, itempool,enemies)
+	Addicted(p, pillcolor, itempool,enemies)
 	BombsAreKey(p, pillcolor, itempool)
 	ImExited(p, pillcolor, itempool)
 	ImDrowsy(p, pillcolor, itempool)
