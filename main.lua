@@ -13,6 +13,13 @@ local PCDescSpa = "Otorga una {{Pill}} pildora aleatoria al tomarlo#Las pildoras
 local PCDescRu = "Дает случайную {{Pill}} пилюлю#Увеличивает шанс появления пилюль#Использует текущую пилюлю и накладывает зависимый от её типа эффект на всю комнату"
 local PCDescPt_Br = "Gere uma pílula {{Pill}} aleatória quando pego#Almente a taxa de queda de pílulas# Consome a pílula segurada e aplique um efeito na sala inteira dependendo no tipo de pílula"
 
+if MiniMapiItemsAPI then
+	local frame = 1
+	local pillcrusherIcon = Sprite()
+	pillcrusherIcon:Load("gfx/ui/minimapitems/pillcrusher_icon.anm2", true)	
+    	MiniMapiItemsAPI:AddCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, pillcrusherIcon, "CustomIconPillCrusher", frame)
+end
+
 if EID then
 	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDesc, "Pill Crusher", "en_us")
 	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDescSpa, "Triturador de Pildoras", "spa")
