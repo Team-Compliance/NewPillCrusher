@@ -11,8 +11,8 @@
     - Full Health = Enemies get healed to full HP --done
     - Health Down = Enemies get 15HP removed from them (30 with horse pill). If HP is lower than 15 (30) then it removes half of current hp (~= 67% of current hp) --done
     - Health Up = Enemeis gain 15HP (30 with horse pill) --done
-    - I Found Pills = Nothing, gives Isaac a different face
-    - Puberty = Enemies become random champion variants
+    - I Found Pills = Nothing, gives Isaac a different face --done
+    - Puberty = Enemies become random champion variants --done
     - Pretty Fly = Enemies get a fly orbital
     - Range Down = Enemies get a range down effect
     - Range Up = Enemies get a range up effect
@@ -31,12 +31,12 @@
     - Amnesia =
     - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player
     - R U a wizard? =
-    - Percs! = Enemies take half damage 
+    - Percs! = Enemies take half damage --done
     - Addicted! = Enemies get double damage --done
     - Re-lax = Enemies spawn poop wherever they walk for a few seconds
-    - ??? = Enemies get confusion
-    - One makes you larger = Enemies get larger. Their hitboxes don't increase
-    - One makes you small = Enemies get smaller. Their hitboxes shrink
+    - ??? = Enemies get confusion --done
+    - One makes you larger = Enemies get larger. Their hitboxes don't increase --done
+    - One makes you small = Enemies get smaller. Their hitboxes shrink --done
     - Infested! =
     - Infested? =
     - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds.
@@ -46,7 +46,7 @@
     - Something's wrong... = A pool of black creep spawns under every enemy that slows down Isaac and enemies
     - I'm Drowsy... = Isaac slows down like Death would do him in boss fight --done
     - I'm Excited!!! = Make Isaac faster (but since it would be bs to control we just apply slowdown to everything like Afterbirth+ pre-nerf Stopwatch) --done
-    - Gulp! = All trinkets in a room are gulped into the player's inventory 
+    - Gulp! = All trinkets in a room are gulped into the player's inventory  --done
     - Horf! = All enemies shoot an Ipecac shot that can damage themselves and Isaac 
     - Feels like I'm walking on sunshine! = all enemies become invulnerable for 3 (6) seconds
     - Vurp! = Previous Pill Crusher effect. If there wasn't - just play animation and do nothing

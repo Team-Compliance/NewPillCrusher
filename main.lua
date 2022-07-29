@@ -271,36 +271,89 @@ local function Addicted(p,pillcolor,itempool,enemies)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_ADDICTED or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Addicted!")
 		for _,enemy in ipairs(enemies) do
-			local mult = pillcolor > 2047 and 1.5 or 3
 			local data = GetData(enemy)
 			data.DoubleDamage = pillcolor > 2047 and 2 or 1.3
 		end
 	end
 end
 
-function mod:DamageEffects(e, damage, flags, source, cd)
-	local data = GetData(e)
-	if data.Armor then
-		if data.Armor > 0 then
-			data.Armor = data.Armor - damage
-		else
-			local leftover = data.Armor
-			data.Armor = nil
-			e:TakeDamage(damage+leftover,flags,source,cd)
-		end
-		return false
+local function IFoundPill(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_I_FOUND_PILLS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		--Game():GetHUD():ShowItemText("Addicted!")
+		p:UsePill(PillEffect.PILLEFFECT_I_FOUND_PILLS,pillcolor,UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
 	end
-	if data.DoubleDamage then
-		if data.TookDD ~= true then
-			data.TookDD = true
-			e:TakeDamage(damage*data.DoubleDamage,flags,source,cd)
-			return false
-		else
-			data.TookDD = nil
+end
+
+local function Puberty(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PUBERTY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Puberty!")
+		for _, enemy in ipairs(enemies) do
+			if not enemy:IsBoss() and not enemy:IsChampion() then
+				local hpMul = enemy.HitPoints / enemy.MaxHitPoints
+				enemy:MakeChampion(enemy.InitSeed)
+				enemy.HitPoints = enemy.MaxHitPoints * hpMul
+			end
 		end
 	end
 end
-mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, mod.DamageEffects)
+
+local function Percs(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PERCS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Percs!")
+		for _,enemy in ipairs(enemies) do
+			local mult = pillcolor > 2047 and 1.5 or 3
+			local data = GetData(enemy)
+			data.HalfDamage = pillcolor > 2047 and 2 or 1.3
+		end
+	end
+end
+
+local function QMx3(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PERCS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("???")
+		for _,enemy in ipairs(enemies) do
+			local mult = pillcolor > 2047 and 2 or 1
+			enemy:AddConfusion(EntityRef(p), 90 * mult, false)
+		end
+	end
+end
+
+local function OMUL(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_LARGER or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("???")
+		for _,enemy in ipairs(enemies) do
+			local mult = pillcolor > 2047 and 2 or 1
+			local s = enemy:GetSprite()
+			s.Scale = s.Scale * 2 * mult
+		end
+	end
+end
+
+local function OMUS(p,pillcolor,itempool,enemies)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_SMALLER or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("???")
+		for _,enemy in ipairs(enemies) do
+			local mult = pillcolor > 2047 and 1 or 2
+			enemy.Scale = enemy.Scale / (2 * mult)
+		end
+	end
+end
+
+local function Gulp(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_GULP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		--Game():GetHUD():ShowItemText("???")
+		local trinket1 = player:GetTrinket(0)
+		local trinket2 = player:GetTrinket(1)
+		if trinket1 ~= 0 then player:TryRemoveTrinket(trinket1) end
+		if trinket2 ~= 0 then player:TryRemoveTrinket(trinket2) end
+		for _,trinket in ipairs(Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET)) do
+			player:AddTrinket(trinket.SubType)
+			p:UsePill(PillEffect.PILLEFFECT_GULP,pillcolor,UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
+		end
+		if trinket1 ~= 0 then player:AddTrinket(trinket1) end
+		if trinket2 ~= 0 then player:AddTrinket(trinket2) end
+	end
+end
 
 function mod:use_pillcrusher(boi, rng, p, slot, data)
 	local pillcolor = p:GetPill(0)
@@ -325,6 +378,13 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 	BombsAreKey(p, pillcolor, itempool)
 	ImExited(p, pillcolor, itempool)
 	ImDrowsy(p, pillcolor, itempool)
+	IFoundPill(p,pillcolor,itempool)
+	Puberty(p,pillcolor,itempool,enemies)
+	Percs(p,pillcolor,itempool,enemies)
+	QMx3(p,pillcolor,itempool,enemies)
+	OMUS(p,pillcolor,itempool,enemies)
+	OMUL(p,pillcolor,itempool,enemies)
+	Gulp(p,pillcolor,itempool)
 	
 	
 	if pillcolor ~= 0 then
@@ -335,6 +395,37 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 	return true
 end
 mod:AddCallback(ModCallbacks.MC_USE_ITEM, mod.use_pillcrusher, CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+
+function mod:DamageEffects(e, damage, flags, source, cd)
+	local data = GetData(e)
+	if data.Armor then
+		if data.Armor > 0 then
+			data.Armor = data.Armor - damage
+		else
+			local leftover = data.Armor
+			data.Armor = nil
+			e:TakeDamage(damage+leftover,flags,source,cd)
+		end
+		return false
+	end
+	if not (data.DoubleDamage and data.HalfDamage) then
+		if data.TookDD ~= true then
+			data.TookDD = true
+			e:TakeDamage(damage*data.DoubleDamage,flags,source,cd)
+			return false
+		else
+			data.TookDD = nil
+		end
+		if data.TookHD ~= true then
+			data.TookHD = true
+			e:TakeDamage(damage/data.HalfDamage,flags,source,cd)
+			return false
+		else
+			data.TookHD = nil
+		end
+	end
+end
+mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, mod.DamageEffects)
 
 function mod:player_effect( p )
 	for i, e in pairs(Isaac.FindByType(EntityType.ENTITY_PLAYER, 0, -1, false, false)) do
@@ -364,11 +455,15 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, mod.player_effect, EntityType.ENTIT
 
 function mod:spawnPill(rng, pos)
 	local spawnposition = Game():GetRoom():FindFreePickupSpawnPosition(pos)
+	local spawned = false
 	for i=0, Game():GetNumPlayers()-1 do
 		local player = Isaac.GetPlayer(i)
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER) == true and mod:GetRandomNumber(1,3,rng) == 1 then
-			print("should spawn")
-			Isaac.Spawn(5, 70, 0, spawnposition, Vector.Zero, player)
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER) and mod:GetRandomNumber(1,3,rng) == 1 and not spawned then
+			local pill = Isaac.Spawn(5, 70, 0, spawnposition, Vector.Zero, player)
+			if player:HasCollectible(CollectibleType.COLLECTIBLE_CONTRACT_FROM_BELOW) then	
+				Isaac.Spawn(5, 70, pill.SubType, spawnposition, Vector.Zero, player)
+			end
+			spawned = true
 		end
 	end
 end
@@ -379,10 +474,11 @@ function mod:item_effect()
 	local room = Game():GetRoom()
 	for i=0, Game():GetNumPlayers()-1 do
 		local player = Isaac.GetPlayer(i)
+		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER) == true and Game():IsGreedMode() == true then
-			Isaac.Spawn(5, 70, 0, player.Position, Vector.FromAngle(math.random(0,360)):Resized(3), player)
-			Isaac.Spawn(5, 70, 0, player.Position, Vector.FromAngle(math.random(0,360)):Resized(3), player)
-			Isaac.Spawn(5, 70, 0, player.Position, Vector.FromAngle(math.random(0,360)):Resized(3), player)
+			Isaac.Spawn(5, 70, 0, player.Position, Vector.FromAngle(mod:GetRandomNumber(0, 360, rng)):Resized(3), player)
+			Isaac.Spawn(5, 70, 0, player.Position, Vector.FromAngle(mod:GetRandomNumber(0, 360, rng)):Resized(3), player)
+			Isaac.Spawn(5, 70, 0, player.Position, Vector.FromAngle(mod:GetRandomNumber(0, 360, rng)):Resized(3), player)
 		end
 	end
 end
