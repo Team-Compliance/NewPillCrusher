@@ -38,6 +38,17 @@ local function GetData(entity)
 	return nil
 end
 
+local function GetEnemies(allEnemies)
+	local enemies = {}
+	for _,enemy in ipairs(Isaac.GetRoomEntities()) do
+		enemy = enemy:ToNPC()
+		if enemy and (enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy() then
+			table.insert(enemies,enemy)
+		end
+	end
+	return enemies
+end
+
 function mod:AddPill(player)
     local data = GetData(player)
     data.pilldrop = data.pilldrop or player:GetCollectibleNum(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
@@ -48,8 +59,8 @@ function mod:AddPill(player)
     end   
 end
 mod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, mod.AddPill)
-
-local function BombsAreKey(p, pillcolor, itempool)
+local PillCrusherEffects = {
+BombsAreKey = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BOMBS_ARE_KEYS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Bombs are key")
 		local bombspickup = Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB)
@@ -106,92 +117,80 @@ local function BombsAreKey(p, pillcolor, itempool)
 			end
 		end
 	end
-end
+end,
 
-local function BadGas(p,pillcolor,itempool,enemies)
+BadGas = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BAD_GAS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Bad Gas")
-		for _,enemy in ipairs(enemies) do
+		for _,enemy in ipairs(GetEnemies(false)) do
 			local cloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SMOKE_CLOUD, 0, enemy.Position, Vector.Zero, enemy):ToEffect()
 			local multi = pillcolor > 2047 and 2 or 1
 			cloud.LifeSpan = 180 / multi
 			enemy:AddPoison(EntityRef(p), 60 * multi, 3 + p.Damage / 2 * (multi - 1))
 		end
 	end
-end
+end,
 
-local function BadTrip(p,pillcolor,itempool,enemies)
+BadTrip = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BAD_TRIP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Bad Trip")
-		for _,enemy in ipairs(enemies) do
+		for _,enemy in ipairs(GetEnemies(false)) do
 			local mult = pillcolor > 2047 and 2 or 1
 			enemy:TakeDamage(enemy.HitPoints / (10 / mult), DamageFlag.DAMAGE_LASER, EntityRef(p),0)
 		end
 	end
-end
+end,
 
-local function HPUP(p,pillcolor,itempool,enemies)
+HPUP = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEALTH_UP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Health Up")
-		for _,enemy in ipairs(enemies) do
+		for _,enemy in ipairs(GetEnemies(false)) do
 			local mult = pillcolor > 2047 and 2 or 1
 			enemy.MaxHitPoints = enemy.MaxHitPoints + 15 * mult
 			enemy.HitPoints = enemy.HitPoints + 15 * mult
 		end
 	end
-end
+end,
 
-local function HPDOWN(p,pillcolor,itempool,enemies)
+HPDOWN = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEALTH_DOWN or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Health Down")
-		for _,enemy in ipairs(enemies) do
+		for _,enemy in ipairs(GetEnemies(false)) do
 			local mult = pillcolor > 2047 and 2 or 1
 			enemy.MaxHitPoints = enemy.MaxHitPoints - math.min(15 * mult,enemy.MaxHitPoints / (2 - 0.5 * (-1 + mult)))
 			enemy.HitPoints = enemy.HitPoints - math.min(15 * mult,enemy.HitPoints / (2 - 0.5 * (-1 + mult)))
 		end
 	end
-end
+end,
 
-local function FTTE(p,pillcolor,itempool,enemies)
+FTTE = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_FRIENDS_TILL_THE_END or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Friends till the end!")
 		local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
-		for _,enemy in ipairs(enemies) do
+		for _,enemy in ipairs(GetEnemies(true)) do
 			local data = GetData(enemy)
 			data.SpawnFliesOnDeath = { Fly = pillcolor > 2047 and mod:GetRandomNumber(1, 3, rng) or 1, Parent = p}
 		end
 	end
-end
+end,
 
-function mod:FliesOnDeath(entity)
-	local data = GetData(entity)
-	if data.SpawnFliesOnDeath then
-		for i = 1, data.SpawnFliesOnDeath.Fly do
-			local fly = Isaac.Spawn(EntityType.ENTITY_FAMILIAR,FamiliarVariant.BLUE_FLY,0,entity.Position,Vector.Zero,data.SpawnFliesOnDeath.Parent)
-			fly:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-		end		
-	end
-end
-mod:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, mod.FliesOnDeath)
-
-
-local function FullHealth(p,pillcolor,itempool,enemies)
+FullHealth = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_FULL_HEALTH or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Full health")
-		for _,enemy in ipairs(enemies) do
+		for _,enemy in ipairs(GetEnemies(true)) do
 			enemy.HitPoints = enemy.MaxHitPoints
 		end
 	end
-end
+end,
 
-local function ImExited(p,pillcolor,itempool)
+ImExited = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_IM_EXCITED or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("I'm excited!!!")
 		DrowsyExited = 1
 	end
-end
+end,
 
-local function ImDrowsy(p,pillcolor,itempool)
+ImDrowsy = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_IM_DROWSY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("I'm drowsy...")
 		DrowsyExited = pillcolor > 2047 and 4 or 2
@@ -201,7 +200,147 @@ local function ImDrowsy(p,pillcolor,itempool)
 			p:EvaluateItems()
 		end
 	end
+end,
+
+BallsOfSteel = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BALLS_OF_STEEL or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Balls of Steel")
+		for _,enemy in ipairs(GetEnemies(false)) do
+			local mult = pillcolor > 2047 and 1.5 or 3
+			local data = GetData(enemy)
+			data.Armor = enemy.MaxHitPoints / mult
+		end
+	end
+end,
+
+
+Paralysis = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PARALYSIS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Paralysis")
+		local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+		for _,enemy in ipairs(GetEnemies(false)) do
+			local mult = pillcolor > 2047 and 2 or 1
+			enemy:AddFreeze(EntityRef(p),mod:GetRandomNumber(60,90,rng) * mult)
+		end
+	end
+end,
+
+Addicted = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_ADDICTED or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Addicted!")
+		for _,enemy in ipairs(GetEnemies(false)) do
+			local data = GetData(enemy)
+			data.DoubleDamage = pillcolor > 2047 and 2 or 1.3
+		end
+	end
+end,
+
+IFoundPill = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_I_FOUND_PILLS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		--Game():GetHUD():ShowItemText("Addicted!")
+		p:UsePill(PillEffect.PILLEFFECT_I_FOUND_PILLS,pillcolor,UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
+	end
+end,
+
+Puberty = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PUBERTY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Puberty!")
+		for _, enemy in ipairs(GetEnemies(true)) do
+			if not enemy:IsBoss() and not enemy:IsChampion() then
+				local hpMul = enemy.HitPoints / enemy.MaxHitPoints
+				enemy:MakeChampion(enemy.InitSeed)
+				enemy.HitPoints = enemy.MaxHitPoints * hpMul
+			end
+		end
+	end
+end,
+
+Percs = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PERCS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Percs!")
+		for _,enemy in ipairs(GetEnemies(false)) do
+			local data = GetData(enemy)
+			data.HalfDamage = pillcolor > 2047 and 2 or 1.3
+		end
+	end
+end,
+
+QMx3 = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PERCS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("???")
+		for _,enemy in ipairs(GetEnemies(false)) do
+			local mult = pillcolor > 2047 and 2 or 1
+			enemy:AddConfusion(EntityRef(p), 90 * mult, false)
+		end
+	end
+end,
+
+OMUL = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_LARGER or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("One Makes You Larger")
+		for _,enemy in ipairs(GetEnemies(false)) do
+			local mult = pillcolor > 2047 and 1.5 or 1
+			enemy.Scale = enemy.Scale * 1.3 * mult
+		end
+	end
+end,
+
+OMUS = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_SMALLER or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("One Makes You Small")
+		for _,enemy in ipairs(GetEnemies(false)) do
+			local mult = pillcolor > 2047 and 1.5 or 1
+			enemy.Scale = enemy.Scale / (1.3 * mult)
+		end
+	end
+end,
+
+Gulp = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_GULP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Gulp!")
+		local trinket1 = p:GetTrinket(0)
+		local trinket2 = p:GetTrinket(1)
+		if trinket1 ~= 0 then p:TryRemoveTrinket(trinket1) end
+		if trinket2 ~= 0 then p:TryRemoveTrinket(trinket2) end
+		local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+		for _,trinket in ipairs(Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET)) do
+			local gold = (pillcolor > 2047 and rng:RandomInt(2) == 1 and trinket.SubType < TrinketType.TRINKET_GOLDEN_FLAG) and TrinketType.TRINKET_GOLDEN_FLAG or 0
+			p:AddTrinket(trinket.SubType + gold)
+			player:UseActiveItem(CollectibleType.COLLECTIBLE_SMELTER,false,false,true,false)
+			Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, 0, trinket.Position,Vector.Zero,nil)
+			trinket:Remove()
+		end
+		if trinket1 ~= 0 then p:AddTrinket(trinket1) end
+		if trinket2 ~= 0 then p:AddTrinket(trinket2) end
+	end
+end,
+
+ExplosiveDiarrhea = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_EXPLOSIVE_DIARRHEA or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Explosive Diarrhea")
+		for _,enemy in ipairs(GetEnemies(true)) do
+			local mul = pillcolor > 2047 and 3 or 1
+			local data = GetData(enemy)
+			data.DiarrheaTimer = 90 * mul
+		end
+	end
 end
+}
+
+function mod:Diarrhea(npc)
+	local data = GetData(npc)
+	if data.DiarrheaTimer then
+		if data.DiarrheaTimer % 10 == 0 then
+			local bomb = Isaac.Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, 0, npc.Position, Vector.Zero, npc)
+			bomb:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+		end
+		data.DiarrheaTimer = data.DiarrheaTimer - 1
+		if data.DiarrheaTimer <= 0 then
+			data.DiarrheaTimer = nil
+		end
+	end
+end
+mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.Diarrhea)
 
 function mod:SlowFastRoom()
 	if DrowsyExited == 1 then
@@ -234,17 +373,6 @@ function mod:SlowFastRoomReset()
 end
 mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.SlowFastRoomReset)
 
-local function BallsOfSteel(p,pillcolor,itempool,enemies)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BALLS_OF_STEEL or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		Game():GetHUD():ShowItemText("Balls of Steel")
-		for _,enemy in ipairs(enemies) do
-			local mult = pillcolor > 2047 and 1.5 or 3
-			local data = GetData(enemy)
-			data.Armor = enemy.MaxHitPoints / mult
-		end
-	end
-end
-
 function mod:BallsOfSteelArmorIndicator(npc)
 	local data = GetData(npc)
 	if data.Armor then
@@ -255,138 +383,15 @@ function mod:BallsOfSteelArmorIndicator(npc)
 end
 mod:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, mod.BallsOfSteelArmorIndicator)
 
-
-local function Paralysis(p,pillcolor,itempool,enemies)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PARALYSIS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		Game():GetHUD():ShowItemText("Paralysis")
-		local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
-		for _,enemy in ipairs(enemies) do
-			local mult = pillcolor > 2047 and 2 or 1
-			enemy:AddFreeze(EntityRef(p),mod:GetRandomNumber(60,90,rng) * mult)
-		end
-	end
-end
-
-local function Addicted(p,pillcolor,itempool,enemies)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_ADDICTED or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		Game():GetHUD():ShowItemText("Addicted!")
-		for _,enemy in ipairs(enemies) do
-			local data = GetData(enemy)
-			data.DoubleDamage = pillcolor > 2047 and 2 or 1.3
-		end
-	end
-end
-
-local function IFoundPill(p,pillcolor,itempool)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_I_FOUND_PILLS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		--Game():GetHUD():ShowItemText("Addicted!")
-		p:UsePill(PillEffect.PILLEFFECT_I_FOUND_PILLS,pillcolor,UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
-	end
-end
-
-local function Puberty(p,pillcolor,itempool,enemies)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PUBERTY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		Game():GetHUD():ShowItemText("Puberty!")
-		for _, enemy in ipairs(enemies) do
-			if not enemy:IsBoss() and not enemy:IsChampion() then
-				local hpMul = enemy.HitPoints / enemy.MaxHitPoints
-				enemy:MakeChampion(enemy.InitSeed)
-				enemy.HitPoints = enemy.MaxHitPoints * hpMul
-			end
-		end
-	end
-end
-
-local function Percs(p,pillcolor,itempool,enemies)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PERCS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		Game():GetHUD():ShowItemText("Percs!")
-		for _,enemy in ipairs(enemies) do
-			local mult = pillcolor > 2047 and 1.5 or 3
-			local data = GetData(enemy)
-			data.HalfDamage = pillcolor > 2047 and 2 or 1.3
-		end
-	end
-end
-
-local function QMx3(p,pillcolor,itempool,enemies)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PERCS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		Game():GetHUD():ShowItemText("???")
-		for _,enemy in ipairs(enemies) do
-			local mult = pillcolor > 2047 and 2 or 1
-			enemy:AddConfusion(EntityRef(p), 90 * mult, false)
-		end
-	end
-end
-
-local function OMUL(p,pillcolor,itempool,enemies)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_LARGER or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		Game():GetHUD():ShowItemText("???")
-		for _,enemy in ipairs(enemies) do
-			local mult = pillcolor > 2047 and 2 or 1
-			local s = enemy:GetSprite()
-			s.Scale = s.Scale * 2 * mult
-		end
-	end
-end
-
-local function OMUS(p,pillcolor,itempool,enemies)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_SMALLER or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		Game():GetHUD():ShowItemText("???")
-		for _,enemy in ipairs(enemies) do
-			local mult = pillcolor > 2047 and 1 or 2
-			enemy.Scale = enemy.Scale / (2 * mult)
-		end
-	end
-end
-
-local function Gulp(p,pillcolor,itempool)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_GULP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
-		--Game():GetHUD():ShowItemText("???")
-		local trinket1 = player:GetTrinket(0)
-		local trinket2 = player:GetTrinket(1)
-		if trinket1 ~= 0 then player:TryRemoveTrinket(trinket1) end
-		if trinket2 ~= 0 then player:TryRemoveTrinket(trinket2) end
-		for _,trinket in ipairs(Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET)) do
-			player:AddTrinket(trinket.SubType)
-			p:UsePill(PillEffect.PILLEFFECT_GULP,pillcolor,UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
-		end
-		if trinket1 ~= 0 then player:AddTrinket(trinket1) end
-		if trinket2 ~= 0 then player:AddTrinket(trinket2) end
-	end
-end
-
 function mod:use_pillcrusher(boi, rng, p, slot, data)
 	local pillcolor = p:GetPill(0)
 	if pillcolor == 0 then return false end
 	local itempool = Game():GetItemPool()
-	local enemies = {}
-	for _,enemy in ipairs(Isaac.GetRoomEntities()) do
-		enemy = enemy:ToNPC()
-		if enemy and enemy:IsVulnerableEnemy() and enemy:IsActiveEnemy() and enemy:IsEnemy() then
-			table.insert(enemies,enemy)
-		end
+
+	for _,func in pairs(PillCrusherEffects) do
+		func(p, pillcolor, itempool)
 	end
-	BadGas(p, pillcolor, itempool,enemies)
-	BadTrip(p, pillcolor, itempool,enemies)
-	HPDOWN(p, pillcolor, itempool,enemies)
-	HPUP(p, pillcolor, itempool,enemies)
-	FTTE(p, pillcolor, itempool,enemies)
-	FullHealth(p, pillcolor, itempool,enemies)
-	BallsOfSteel(p, pillcolor, itempool,enemies)
-	Paralysis(p, pillcolor, itempool,enemies)
-	Addicted(p, pillcolor, itempool,enemies)
-	BombsAreKey(p, pillcolor, itempool)
-	ImExited(p, pillcolor, itempool)
-	ImDrowsy(p, pillcolor, itempool)
-	IFoundPill(p,pillcolor,itempool)
-	Puberty(p,pillcolor,itempool,enemies)
-	Percs(p,pillcolor,itempool,enemies)
-	QMx3(p,pillcolor,itempool,enemies)
-	OMUS(p,pillcolor,itempool,enemies)
-	OMUL(p,pillcolor,itempool,enemies)
-	Gulp(p,pillcolor,itempool)
-	
-	
+		
 	if pillcolor ~= 0 then
 		itempool:IdentifyPill(pillcolor)
 		p:SetPill(0,0)
@@ -396,7 +401,19 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 end
 mod:AddCallback(ModCallbacks.MC_USE_ITEM, mod.use_pillcrusher, CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 
+function mod:FliesOnDeath(entity)
+	local data = GetData(entity)
+	if data.SpawnFliesOnDeath then
+		for i = 1, data.SpawnFliesOnDeath.Fly do
+			local fly = Isaac.Spawn(EntityType.ENTITY_FAMILIAR,FamiliarVariant.BLUE_FLY,0,entity.Position,Vector.Zero,data.SpawnFliesOnDeath.Parent)
+			fly:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+		end		
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, mod.FliesOnDeath)
+
 function mod:DamageEffects(e, damage, flags, source, cd)
+	if e:ToPlayer() then return nil end
 	local data = GetData(e)
 	if data.Armor then
 		if data.Armor > 0 then
@@ -409,14 +426,14 @@ function mod:DamageEffects(e, damage, flags, source, cd)
 		return false
 	end
 	if not (data.DoubleDamage and data.HalfDamage) then
-		if data.TookDD ~= true then
+		if not data.TookDD and data.DoubleDamage then
 			data.TookDD = true
 			e:TakeDamage(damage*data.DoubleDamage,flags,source,cd)
 			return false
 		else
 			data.TookDD = nil
 		end
-		if data.TookHD ~= true then
+		if not data.TookHD and data.HalfDamage then
 			data.TookHD = true
 			e:TakeDamage(damage/data.HalfDamage,flags,source,cd)
 			return false
