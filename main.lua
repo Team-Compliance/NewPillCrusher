@@ -306,7 +306,7 @@ Gulp = function(p,pillcolor,itempool)
 		for _,trinket in ipairs(Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET)) do
 			local gold = (pillcolor > 2047 and rng:RandomInt(2) == 1 and trinket.SubType < TrinketType.TRINKET_GOLDEN_FLAG) and TrinketType.TRINKET_GOLDEN_FLAG or 0
 			p:AddTrinket(trinket.SubType + gold)
-			player:UseActiveItem(CollectibleType.COLLECTIBLE_SMELTER,false,false,true,false)
+			p:UseActiveItem(CollectibleType.COLLECTIBLE_SMELTER,false,false,true,false)
 			Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, 0, trinket.Position,Vector.Zero,nil)
 			trinket:Remove()
 		end
