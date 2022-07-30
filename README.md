@@ -7,7 +7,7 @@
     - Bad Trip = Enemies take 1/10 of current damage. Horse pill: removes 1/5 of current hp. --done
     - Balls of Steel = Enemies get 1/10 (1/5) shield-like effect. Damaging them won't indicate that they were damaged until "shield" hp is gone --done
     - Bombs are Key = All bombs in a room are converted into keys and vice versa. Horse pill: pickups convert into double packs. --done
-    - Explosive Diarrhea = Enemies fart out troll bombs
+    - Explosive Diarrhea = Enemies fart out troll bombs --done
     - Full Health = Enemies get healed to full HP --done
     - Health Down = Enemies get 15HP removed from them (30 with horse pill). If HP is lower than 15 (30) then it removes half of current hp (~= 67% of current hp) --done
     - Health Up = Enemeis gain 15HP (30 with horse pill) --done
@@ -24,7 +24,7 @@
     - Luck Up =
     - Telepills = Teleports all enemies in a room to a different room
     - 48 Hour Energy =
-    - Hematemesis =
+    - Hematemesis = Damages enemies and spawns 1-2 red hearts near them
     - Paralysis = All enemies in the room get paralyzed = --done
     - I can see forever! =
     - Pheromones =
@@ -37,8 +37,8 @@
     - ??? = Enemies get confusion --done
     - One makes you larger = Enemies get larger. Their hitboxes don't increase --done
     - One makes you small = Enemies get smaller. Their hitboxes shrink --done
-    - Infested! =
-    - Infested? =
+    - Infested! = Destroys all poop in the room and spawns an enemy spider in each destroyed poop
+    - Infested? = After killing an enemy, 1-3 enemy spiders are spawned
     - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds.
     - Retro Vision =
     - Friends Till The End! = Flies spawn after an enemy is killed --done
