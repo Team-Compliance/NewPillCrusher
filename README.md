@@ -1,6 +1,7 @@
 # To-do list
 - Pill Crusher rework
-  - ??? pills get their names revealed after using the item on them. Splash text also appears when a pill is crushed
+  - ??? pills get their names revealed after using the item on them. Splash text also appears when a pill is crushed --done
+  - Upon using Pill Crusher, a dust particle effect plays
 
   - Effects
     - Bad Gas = Enemies fart poisonous gas and take damage. The poisonous gas will harm the player if they stand in it for too long. Horse pill: poison deals 3 + half player damage --done
@@ -24,7 +25,7 @@
     - Luck Up =
     - Telepills = Teleports all enemies in a room to a different room
     - 48 Hour Energy =
-    - Hematemesis = Damages enemies and spawns 1-2 red hearts near them
+    - Hematemesis = Applies bleed effect to all enemies and has a chance to spawn 1-2 red hearts near them. Certain types of enemies can drop different hearts that replace the red hearts (for example, Bonys have a chance for Bone Hearts to replace red hearts and Rotten Gapers have a chance for Rotten Hearts to replace red hearts, etc. for the other heart types)
     - Paralysis = All enemies in the room get paralyzed = --done
     - I can see forever! =
     - Pheromones =
@@ -38,7 +39,7 @@
     - One makes you larger = Enemies get larger. Their hitboxes don't increase --done
     - One makes you small = Enemies get smaller. Their hitboxes shrink --done
     - Infested! = Destroys all poop in the room and spawns an enemy spider in each destroyed poop
-    - Infested? = After killing an enemy, 1-3 enemy spiders are spawned
+    - Infested? = Applies slowness effect to all enemies in room for a couple of seconds. If they are killed while slowed, they explode into a random amount of blue spiders (1-3)
     - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds.
     - Retro Vision =
     - Friends Till The End! = Flies spawn after an enemy is killed --done
