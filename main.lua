@@ -3,6 +3,9 @@ local mod = PillCrusher
 
 CollectibleType.COLLECTIBLE_PILL_CRUSHER = Isaac.GetItemIdByName("Pill Crusher");
 
+local BloomAmount = 0
+local ActivateBloom = false
+
 local rangedown = 0
 local luckdown = 0
 local tearsdown = 0
@@ -24,7 +27,7 @@ if EID then
 	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDesc, "Pill Crusher", "en_us")
 	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDescSpa, "Triturador de Pildoras", "spa")
 	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDescRu, "Дробилка пилюль", "ru")
-	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDesc, "Triturador de Pílula", "pt_br")
+	EID:addCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER, PCDescPt_Br, "Triturador de Pílula", "pt_br")
 end
 
 local function GetData(entity)
@@ -48,6 +51,17 @@ local function GetEnemies(allEnemies)
 	end
 	return enemies
 end
+
+function mod:BloomShader(shader)
+	if shader == "PillCrusherBloom" then 
+		local params = {
+			BloomAmount = BloomAmount,
+			Ratio = {0,0}
+		}
+		return params
+	end
+end
+mod:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, mod.BloomShader)
 
 function mod:AddPill(player)
     local data = GetData(player)
@@ -350,6 +364,16 @@ function mod:SlowFastRoom()
 			p:AddSlowing(EntityRef(nil),1,0.8 / DrowsyExited,Color(1,1,1,1))
 		end
 	end
+	if ActivateBloom == true then
+		if BloomAmount >= 1.5 then
+			ActivateBloom = false
+		end
+		BloomAmount = BloomAmount + 0.1
+	elseif BloomAmount > 0.1 then
+		BloomAmount = BloomAmount - 0.1
+	elseif BloomAmount < 0.1 then
+		BloomAmount = 0
+	end
 end
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, mod.SlowFastRoom)
 
@@ -387,7 +411,7 @@ function mod:use_pillcrusher(boi, rng, p, slot, data)
 	local pillcolor = p:GetPill(0)
 	if pillcolor == 0 then return false end
 	local itempool = Game():GetItemPool()
-
+	ActivateBloom = itempool:GetPillEffect(pillcolor, p) ~= PillEffect.PILLEFFECT_I_FOUND_PILLS and pillcolor ~= PillColor.PILL_GOLD
 	for _,func in pairs(PillCrusherEffects) do
 		func(p, pillcolor, itempool)
 	end
