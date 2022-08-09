@@ -14,7 +14,7 @@
     - Health Up = Enemeis gain 15HP (30 with horse pill) --done
     - I Found Pills = Nothing, gives Isaac a different face --done
     - Puberty = Enemies become random champion variants --done
-    - Pretty Fly = Enemies get a fly orbital
+    - Pretty Fly = Enemies get a fly (2 flies) orbital --done
     - Range Down = Enemies get a range down effect
     - Range Up = Enemies get a range up effect
     - Speed Down = Enemies get a speed down effect

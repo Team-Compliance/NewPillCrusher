@@ -5,6 +5,7 @@ CollectibleType.COLLECTIBLE_PILL_CRUSHER = Isaac.GetItemIdByName("Pill Crusher")
 
 local BloomAmount = 0
 local ActivateBloom = false
+local MonsterTeleTable = {}
 
 local rangedown = 0
 local luckdown = 0
@@ -41,12 +42,14 @@ local function GetData(entity)
 	return nil
 end
 
-local function GetEnemies(allEnemies)
+local function GetEnemies(allEnemies, noBosses)
 	local enemies = {}
 	for _,enemy in ipairs(Isaac.GetRoomEntities()) do
 		enemy = enemy:ToNPC()
 		if enemy and (enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy() then
-			table.insert(enemies,enemy)
+			if not enemy:IsBoss() or (enemy:IsBoss() and not noBosses) then
+				table.insert(enemies,enemy)
+			end
 		end
 	end
 	return enemies
@@ -326,6 +329,33 @@ ExplosiveDiarrhea = function(p,pillcolor,itempool)
 			local data = GetData(enemy)
 			data.DiarrheaTimer = 90 * mul
 		end
+	end
+end,
+
+PrettyFly = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PRETTY_FLY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Pretty Fly")
+		for _,enemy in ipairs(GetEnemies(false)) do
+			local mul = pillcolor > 2047 and 2 or 1
+			--enemy:Morph(enemy.Type,enemy.Variant,enemy.SubType,17)
+			for i = 1, mul do
+				local fly = Isaac.Spawn(EntityType.ENTITY_ETERNALFLY,0,0,enemy.Position,Vector.Zero,enemy):ToNPC()
+				fly.Parent = enemy
+			end
+		end
+	end
+end,
+
+Telepills = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_TELEPILLS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Telepills")
+		for _,enemy in ipairs(GetEnemies(true,true)) do
+			table.insert(MonsterTeleTable,{Type = enemy.Type, Variant = enemy.Vaariant, SubType = enemy.SubType, ChampionIDX = enemy:GetChampionColorIdx(), Seed = enemy.InitSeed})
+			enemy:AddEntityFlags(EntityFlag.FLAG_FREEZE)
+			local sprite = enemy:GetSprite()
+			sprite.Color:SetOffset(1,1,1)
+		end
+		MonsterTeleTable = {}
 	end
 end
 }
