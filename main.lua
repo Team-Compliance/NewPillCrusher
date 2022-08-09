@@ -52,17 +52,6 @@ local function GetEnemies(allEnemies)
 	return enemies
 end
 
-function mod:BloomShader(shader)
-	if shader == "PillCrusherBloom" then 
-		local params = {
-			BloomAmount = BloomAmount,
-			Ratio = {0,0}
-		}
-		return params
-	end
-end
-mod:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, mod.BloomShader)
-
 function mod:AddPill(player)
     local data = GetData(player)
     data.pilldrop = data.pilldrop or player:GetCollectibleNum(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
@@ -356,6 +345,40 @@ function mod:Diarrhea(npc)
 end
 mod:AddCallback(ModCallbacks.MC_NPC_UPDATE, mod.Diarrhea)
 
+local blurspeed = 0.07
+
+local function Lerp(a, b, t)
+	return a + (b-a) * 0.2 * t
+end
+
+function mod:BloomShader(shader)
+	if shader == "PillCrusherBloom" then 
+		local params = {
+			BloomAmount = BloomAmount,
+			Ratio = {BloomAmount /3, BloomAmount / 2}
+		}
+		if ActivateBloom == true then
+			if BloomAmount >= 2.5 then
+				ActivateBloom = false
+				blurspeed = 0.01
+			else
+				BloomAmount = BloomAmount + blurspeed
+				blurspeed = Lerp(blurspeed, 0.01, 0.06)
+			end
+		elseif BloomAmount > 0.1 then
+			BloomAmount = BloomAmount - blurspeed
+			blurspeed = Lerp(blurspeed,0.1,0.08)
+		elseif BloomAmount < 0.1 then
+			BloomAmount = 0
+			blurspeed = 0.07
+		end
+		return params
+	end
+end
+mod:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, mod.BloomShader)
+
+
+
 function mod:SlowFastRoom()
 	if DrowsyExited == 1 then
 		Game():GetRoom():SetBrokenWatchState(DrowsyExited)
@@ -363,16 +386,6 @@ function mod:SlowFastRoom()
 		for _,p in ipairs(Isaac.FindByType(EntityType.ENTITY_PLAYER)) do
 			p:AddSlowing(EntityRef(nil),1,0.8 / DrowsyExited,Color(1,1,1,1))
 		end
-	end
-	if ActivateBloom == true then
-		if BloomAmount >= 1.5 then
-			ActivateBloom = false
-		end
-		BloomAmount = BloomAmount + 0.1
-	elseif BloomAmount > 0.1 then
-		BloomAmount = BloomAmount - 0.1
-	elseif BloomAmount < 0.1 then
-		BloomAmount = 0
 	end
 end
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, mod.SlowFastRoom)
