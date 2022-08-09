@@ -358,7 +358,7 @@ function mod:BloomShader(shader)
 			Ratio = {BloomAmount /3, BloomAmount / 2}
 		}
 		if ActivateBloom == true then
-			if BloomAmount >= 2.5 then
+			if BloomAmount >= 2.1 then
 				ActivateBloom = false
 				blurspeed = 0.01
 			else
@@ -367,7 +367,7 @@ function mod:BloomShader(shader)
 			end
 		elseif BloomAmount > 0.1 then
 			BloomAmount = BloomAmount - blurspeed
-			blurspeed = Lerp(blurspeed,0.1,0.08)
+			blurspeed = Lerp(blurspeed,0.2,0.08)
 		elseif BloomAmount < 0.1 then
 			BloomAmount = 0
 			blurspeed = 0.07
