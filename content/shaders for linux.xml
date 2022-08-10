@@ -1,0 +1,57 @@
+<shaders>
+    <shader name="PillCrusherBloom">
+        <parameters>
+            <param name="BloomAmount" type="float"/>
+            <param name="Ratio" type="vec2"/>
+        </parameters>
+        <vertex><![CDATA[
+            attribute vec3 Position;
+            attribute vec4 Color;
+            attribute vec2 TexCoord;
+            attribute vec4 RenderData;
+            attribute float Scale;
+            attribute float BloomAmount;
+            attribute vec2 Ratio;
+            varying vec4 Color0;
+            varying vec2 TexCoord0;
+            varying vec4 RenderDataOut;
+            varying float ScaleOut;
+            varying float BloomAmountOut;
+            varying vec2 RatioOut;
+            uniform mat4 Transform;
+            void main(void)
+            {
+                RenderDataOut = RenderData;
+                ScaleOut = Scale;           // Passing data to fragment shader
+                BloomAmountOut = BloomAmount;   // Passing data to fragment shader
+                RatioOut = Ratio;             // Passing data to fragment shader
+                Color0 = Color;
+                TexCoord0 = TexCoord;
+                gl_Position = Transform * vec4(Position.xyz, 1.0);
+            }
+        ]]></vertex>
+        <fragment><![CDATA[
+            varying lowp vec4 Color0;
+            varying mediump vec2 TexCoord0;
+            varying lowp vec4 RenderDataOut;
+            varying lowp float ScaleOut;
+            varying mediump float BloomAmountOut;
+            varying mediump vec2 RatioOut;
+            uniform sampler2D Texture0;
+            
+            void main(void)
+            {
+                vec4 sum = vec4(0);
+                vec2 texcoord = vec2(TexCoord0);
+                gl_FragColor = Color0 * texture2D(Texture0, texcoord);
+                for(int i=-4;i < 4; i++){
+                    for (int j = -3; j < 3; j++) {
+                        vec4 col = texture2D(Texture0, texcoord + vec2(j, i) * vec2(0,0));
+                        sum += col * col * 0.05;
+                    }
+                }
+                gl_FragColor += sum * BloomAmountOut;
+            }
+        ]]></fragment>
+    </shader>
+</shaders>
