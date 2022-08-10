@@ -24,7 +24,6 @@
                 RenderDataOut = RenderData;
                 ScaleOut = Scale;           // Passing data to fragment shader
                 BloomAmountOut = BloomAmount;   // Passing data to fragment shader
-                RatioOut = Ratio;             // Passing data to fragment shader
                 Color0 = Color;
                 TexCoord0 = TexCoord;
                 gl_Position = Transform * vec4(Position.xyz, 1.0);
@@ -36,21 +35,13 @@
             varying lowp vec4 RenderDataOut;
             varying lowp float ScaleOut;
             varying mediump float BloomAmountOut;
-            varying mediump vec2 RatioOut;
             uniform sampler2D Texture0;
             
             void main(void)
             {
                 vec4 sum = vec4(0);
                 vec2 texcoord = vec2(TexCoord0);
-                gl_FragColor = Color0 * texture2D(Texture0, texcoord);
-                for(int i=-4;i < 4; i++){
-                    for (int j = -3; j < 3; j++) {
-                        vec4 col = texture2D(Texture0, texcoord + vec2(j, i) * vec2(0,0));
-                        sum += col * col * 0.05;
-                    }
-                }
-                gl_FragColor += sum * BloomAmountOut;
+                gl_FragColor = Color0 * texture2D(Texture0, texcoord) + texture2D(Texture0, texcoord) * BloomAmountOut*0.8;       
             }
         ]]></fragment>
     </shader>
