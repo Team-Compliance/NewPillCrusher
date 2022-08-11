@@ -65,8 +65,9 @@ function mod:AddPill(player)
     end   
 end
 mod:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, mod.AddPill)
+
 local PillCrusherEffects = {
-BombsAreKey = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_BOMBS_ARE_KEYS] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BOMBS_ARE_KEYS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Bombs are key")
 		local bombspickup = Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB)
@@ -125,7 +126,7 @@ BombsAreKey = function(p,pillcolor,itempool)
 	end
 end,
 
-BadGas = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_BAD_GAS] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BAD_GAS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Bad Gas")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -137,7 +138,7 @@ BadGas = function(p,pillcolor,itempool)
 	end
 end,
 
-BadTrip = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_BAD_TRIP] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BAD_TRIP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Bad Trip")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -147,7 +148,7 @@ BadTrip = function(p,pillcolor,itempool)
 	end
 end,
 
-HPUP = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_HEALTH_UP] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEALTH_UP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Health Up")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -158,7 +159,7 @@ HPUP = function(p,pillcolor,itempool)
 	end
 end,
 
-HPDOWN = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_HEALTH_DOWN] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEALTH_DOWN or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Health Down")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -169,7 +170,7 @@ HPDOWN = function(p,pillcolor,itempool)
 	end
 end,
 
-FTTE = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_FRIENDS_TILL_THE_END] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_FRIENDS_TILL_THE_END or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Friends till the end!")
 		local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
@@ -180,7 +181,7 @@ FTTE = function(p,pillcolor,itempool)
 	end
 end,
 
-FullHealth = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_FULL_HEALTH] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_FULL_HEALTH or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Full health")
 		for _,enemy in ipairs(GetEnemies(true)) do
@@ -189,14 +190,14 @@ FullHealth = function(p,pillcolor,itempool)
 	end
 end,
 
-ImExited = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_IM_EXCITED] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_IM_EXCITED or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("I'm excited!!!")
 		DrowsyExited = 1
 	end
 end,
 
-ImDrowsy = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_IM_DROWSY] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_IM_DROWSY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("I'm drowsy...")
 		DrowsyExited = pillcolor > 2047 and 4 or 2
@@ -208,7 +209,7 @@ ImDrowsy = function(p,pillcolor,itempool)
 	end
 end,
 
-BallsOfSteel = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_BALLS_OF_STEEL] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_BALLS_OF_STEEL or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Balls of Steel")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -220,7 +221,7 @@ BallsOfSteel = function(p,pillcolor,itempool)
 end,
 
 
-Paralysis = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_PARALYSIS] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PARALYSIS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Paralysis")
 		local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
@@ -231,7 +232,7 @@ Paralysis = function(p,pillcolor,itempool)
 	end
 end,
 
-Addicted = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_ADDICTED] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_ADDICTED or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Addicted!")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -241,14 +242,14 @@ Addicted = function(p,pillcolor,itempool)
 	end
 end,
 
-IFoundPill = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_I_FOUND_PILLS] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_I_FOUND_PILLS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		--Game():GetHUD():ShowItemText("Addicted!")
 		p:UsePill(PillEffect.PILLEFFECT_I_FOUND_PILLS,pillcolor,UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
 	end
 end,
 
-Puberty = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_PUBERTY] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PUBERTY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Puberty!")
 		for _, enemy in ipairs(GetEnemies(true)) do
@@ -261,7 +262,7 @@ Puberty = function(p,pillcolor,itempool)
 	end
 end,
 
-Percs = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_PERCS] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PERCS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Percs!")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -271,8 +272,8 @@ Percs = function(p,pillcolor,itempool)
 	end
 end,
 
-QMx3 = function(p,pillcolor,itempool)
-	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PERCS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+[PillEffect.PILLEFFECT_QUESTIONMARK] = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_QUESTIONMARK or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("???")
 		for _,enemy in ipairs(GetEnemies(false)) do
 			local mult = pillcolor > 2047 and 2 or 1
@@ -281,7 +282,7 @@ QMx3 = function(p,pillcolor,itempool)
 	end
 end,
 
-OMUL = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_LARGER] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_LARGER or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("One Makes You Larger")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -291,7 +292,7 @@ OMUL = function(p,pillcolor,itempool)
 	end
 end,
 
-OMUS = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_SMALLER] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_SMALLER or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("One Makes You Small")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -301,7 +302,7 @@ OMUS = function(p,pillcolor,itempool)
 	end
 end,
 
-Gulp = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_GULP] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_GULP or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Gulp!")
 		local trinket1 = p:GetTrinket(0)
@@ -321,7 +322,7 @@ Gulp = function(p,pillcolor,itempool)
 	end
 end,
 
-ExplosiveDiarrhea = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_EXPLOSIVE_DIARRHEA] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_EXPLOSIVE_DIARRHEA or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Explosive Diarrhea")
 		for _,enemy in ipairs(GetEnemies(true)) do
@@ -332,7 +333,7 @@ ExplosiveDiarrhea = function(p,pillcolor,itempool)
 	end
 end,
 
-PrettyFly = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_PRETTY_FLY] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_PRETTY_FLY or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Pretty Fly")
 		for _,enemy in ipairs(GetEnemies(false)) do
@@ -346,16 +347,30 @@ PrettyFly = function(p,pillcolor,itempool)
 	end
 end,
 
-Telepills = function(p,pillcolor,itempool)
+[PillEffect.PILLEFFECT_TELEPILLS] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_TELEPILLS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Telepills")
 		for _,enemy in ipairs(GetEnemies(true,true)) do
-			table.insert(MonsterTeleTable,{Type = enemy.Type, Variant = enemy.Vaariant, SubType = enemy.SubType, ChampionIDX = enemy:GetChampionColorIdx(), Seed = enemy.InitSeed})
+			table.insert(MonsterTeleTable,{Type = enemy.Type, Variant = enemy.Variant, SubType = enemy.SubType, ChampionIDX = enemy:GetChampionColorIdx(), Seed = enemy.InitSeed, HP = enemy.HitPoints})
 			enemy:AddEntityFlags(EntityFlag.FLAG_FREEZE)
 			local sprite = enemy:GetSprite()
-			sprite.Color:SetOffset(1,1,1)
+			sprite.Color = Color(1,1,1,1,1,1,1)
+			enemy:Remove()
 		end
-		MonsterTeleTable = {}
+	end
+end,
+[PillEffect.PILLEFFECT_HEMATEMESIS] = function(p,pillcolor,itempool)
+	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEMATEMESIS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
+		Game():GetHUD():ShowItemText("Hematemesis")
+		for _,enemy in ipairs(GetEnemies()) do
+			enemy:AddEntityFlags(EntityFlag.FLAG_BLEED_OUT)
+			local rng = p:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+			if mod:GetRandomNumber(1,100,rng) < 30 then
+				for i = 1, (rng:RandomInt(2) + 1) do
+					Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_HEART, HeartSubType.HEART_FULL, Game():GetRoom():FindFreePickupSpawnPosition(enemy.Position),Vector.Zero,nil)
+				end
+			end
+		end
 	end
 end
 }
@@ -450,19 +465,45 @@ function mod:BallsOfSteelArmorIndicator(npc)
 end
 mod:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, mod.BallsOfSteelArmorIndicator)
 
+function mod:NewTeleRoom()
+	local room = Game():GetRoom()
+	if #MonsterTeleTable > 0 and room:IsClear() then
+		local spawn = {}
+		local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+		for k,v in ipairs(MonsterTeleTable) do
+			if rng:RandomInt(4) == 1 then
+				local spawnpos = room:FindFreeTilePosition(room:GetRandomPosition(20), 10)
+				local enemy = Game():Spawn(v.Type,v.Variant,spawnpos,Vector.Zero,nil,v.SubType,v.Seed):ToNPC()
+				if v.ChampionIDX ~= -1 then
+					enemy:MakeChampion(v.Seed,v.ChampionIDX,true)
+				end
+				enemy.HitPoints = v.HP
+				table.remove(MonsterTeleTable,k)
+			end
+		end
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.NewTeleRoom)
+
 function mod:use_pillcrusher(boi, rng, p, slot, data)
 	local pillcolor = p:GetPill(0)
 	if pillcolor == 0 then return false end
 	local itempool = Game():GetItemPool()
-	ActivateBloom = itempool:GetPillEffect(pillcolor, p) ~= PillEffect.PILLEFFECT_I_FOUND_PILLS and pillcolor ~= PillColor.PILL_GOLD
-	for _,func in pairs(PillCrusherEffects) do
-		func(p, pillcolor, itempool)
-	end
-		
-	if pillcolor ~= 0 then
-		itempool:IdentifyPill(pillcolor)
+	ActivateBloom = itempool:GetPillEffect(pillcolor, p) ~= PillEffect.PILLEFFECT_I_FOUND_PILLS
+	local func
+	if pillcolor < PillColor.PILL_GOLD then
+		func = PillCrusherEffects[itempool:GetPillEffect(pillcolor, p)]
 		p:SetPill(0,0)
+	else
+		func = PillCrusherEffects[mod:GetRandomNumber(0,13,rng)]
+		if rng:RandomInt(10) == 1 then
+			p:SetPill(0,0)
+		end
 	end
+	if func ~= nil then
+		func(p,pillcolor,itempool)
+	end
+	itempool:IdentifyPill(pillcolor)
 	SFXManager():Play(462, 1, 2, false, 1, 0)
 	return true
 end
@@ -511,31 +552,28 @@ function mod:DamageEffects(e, damage, flags, source, cd)
 end
 mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, mod.DamageEffects)
 
-function mod:player_effect( p )
-	for i, e in pairs(Isaac.FindByType(EntityType.ENTITY_PLAYER, 0, -1, false, false)) do
-		local p = e:ToPlayer()
-		for _, entity in pairs(Isaac.GetRoomEntities()) do
-			if entity.Type == 9 then
-				if rangedown > 0 then
-					local proj = entity:ToProjectile()
-					proj.Height = proj.Height + 7
-				end
-				if tearsdown > 0 then
-					local proj = entity:ToProjectile()
-					proj:Remove()
-				end
-				if luckdown > 0 then
-					local proj = entity:ToProjectile()
-					proj.ProjectileFlags = 0
-				end
+function mod:player_effect()
+
+	for _, entity in pairs(Isaac.GetRoomEntities()) do
+		if entity.Type == 9 then
+			local proj = entity:ToProjectile()
+			if rangedown > 0 then
+				proj.Height = proj.Height + 7
+			end
+			if tearsdown > 0 then
+				proj:Remove()
+			end
+			if luckdown > 0 then
+				proj.ProjectileFlags = 0
 			end
 		end
-		rangedown = rangedown - 1
-		luckdown = luckdown - 1
-		tearsdown = tearsdown - 1
 	end
+	rangedown = rangedown > 0 and (rangedown - 1) or 0
+	luckdown = luckdown > 0 and (luckdown - 1) or 0
+	tearsdown = tearsdown > 0 and (tearsdown - 1) or 0
+	
 end
-mod:AddCallback(ModCallbacks.MC_POST_UPDATE, mod.player_effect, EntityType.ENTITY_PLAYER)
+mod:AddCallback(ModCallbacks.MC_POST_UPDATE, mod.player_effect)
 
 function mod:spawnPill(rng, pos)
 	local spawnposition = Game():GetRoom():FindFreePickupSpawnPosition(pos)
