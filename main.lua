@@ -351,14 +351,15 @@ end,
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_TELEPILLS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Telepills")
 		for _,enemy in ipairs(GetEnemies(true,true)) do
-			table.insert(MonsterTeleTable,{Type = enemy.Type, Variant = enemy.Variant, SubType = enemy.SubType, ChampionIDX = enemy:GetChampionColorIdx(), Seed = enemy.InitSeed, HP = enemy.HitPoints})
 			enemy:AddEntityFlags(EntityFlag.FLAG_FREEZE)
-			local sprite = enemy:GetSprite()
-			sprite.Color = Color(1,1,1,1,1,1,1)
-			enemy:Remove()
+			enemy.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+			enemy.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+			GetData(enemy).TeleFrames = 0
 		end
+		SFXManager():Play(SoundEffect.SOUND_TELEPILLS,1,0)
 	end
 end,
+
 [PillEffect.PILLEFFECT_HEMATEMESIS] = function(p,pillcolor,itempool)
 	if itempool:GetPillEffect(pillcolor, p) == PillEffect.PILLEFFECT_HEMATEMESIS or pillcolor == PillColor.PILL_GOLD or pillcolor == 2062 then
 		Game():GetHUD():ShowItemText("Hematemesis")
@@ -468,7 +469,6 @@ mod:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, mod.BallsOfSteelArmorIndicator)
 function mod:NewTeleRoom()
 	local room = Game():GetRoom()
 	if #MonsterTeleTable > 0 and room:IsClear() then
-		local spawn = {}
 		local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 		for k,v in ipairs(MonsterTeleTable) do
 			if rng:RandomInt(4) == 1 then
@@ -484,6 +484,64 @@ function mod:NewTeleRoom()
 	end
 end
 mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.NewTeleRoom)
+
+function mod:NewTeleLevel()
+	MonsterTeleTable = {}
+end
+mod:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, mod.NewTeleLevel)
+
+
+function mod:TeleportMonsterAnim(npc)
+	local d = GetData(npc)
+	local s = npc:GetSprite()
+	local originScale = s.Scale
+	local originOffset = s.Offset
+	if d.TeleFrames then
+		if d.TeleFrames == 0 or d.TeleFrames == 1 then
+			s.Offset = Vector(originOffset.X, originOffset.Y + 9)
+			s.Scale = Vector(originScale.X * 0.9, originScale.Y * 1.1)
+		end
+		if d.TeleFrames == 2 or d.TeleFrames == 3 then
+			s.Offset = Vector(originOffset.X, originOffset.Y - 23)
+			s.Scale = Vector(originScale.X * 1.4, originScale.Y * 0.6)
+		end
+		if d.TeleFrames == 3 then
+			s.Offset = Vector(originOffset.X, originOffset.Y - 23)
+			s.Scale = Vector(originScale.X * 1.4, originScale.Y * 0.6)
+		end
+		if d.TeleFrames == 4 then
+			s.Offset = Vector(originOffset.X, originOffset.Y - 23)
+			s.Scale = Vector(originScale.X * 1.8, originScale.Y * 0.5)
+		end
+		if d.TeleFrames == 5 then
+			s.Offset = Vector(originOffset.X, originOffset.Y + 27)
+			s.Scale = Vector(originScale.X * 0.5, originScale.Y * 2.2)
+		end
+		if d.TeleFrames == 6 then
+			s.Offset = Vector(originOffset.X, originOffset.Y + 27)
+			s.Scale = Vector(originScale.X * 0.3, originScale.Y * 3.0)
+		end
+		if d.TeleFrames == 7 then
+			s.Offset = Vector(originOffset.X, originOffset.Y + 31)
+			s.Scale = Vector(originScale.X * 0.1, originScale.Y * 8)
+		end
+		if d.TeleFrames >= 8 then
+			s.Scale = Vector.Zero
+			table.insert(MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints})
+			npc:Remove()
+		end
+		if d.TeleFrames % 2 == 0 then
+			s.Color = Color(0,0,0,1)
+		else
+			s.Color = Color(1,1,1,1,1,1,1)
+		end
+		d.TeleFrames = d.TeleFrames + 1
+		if not Game():IsPaused() then
+			s:Update()
+		end
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, mod.TeleportMonsterAnim)
 
 function mod:use_pillcrusher(boi, rng, p, slot, data)
 	local pillcolor = p:GetPill(0)
