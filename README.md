@@ -23,7 +23,7 @@
     - Tears Up = Enemies get a tears up effect
     - Luck Down =
     - Luck Up =
-    - Telepills = Teleports all enemies in a room to a different room --done partially, todo: teleport anim
+    - Telepills = Teleports all enemies in a room to a different room --done
     - 48 Hour Energy =
     - Hematemesis = Applies bleed effect to all enemies and has a chance to spawn 1-2 red hearts near them. Certain types of enemies can drop different hearts that replace the red hearts (for example, Bonys have a chance for Bone Hearts to replace red hearts and Rotten Gapers have a chance for Rotten Hearts to replace red hearts, etc. for the other heart types) --done partially
     - Paralysis = All enemies in the room get paralyzed = --done
