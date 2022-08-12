@@ -1,4 +1,5 @@
 PillCrusher = RegisterMod("Pill Crusher", 1);
+local json = require("json")
 local mod = PillCrusher
 
 CollectibleType.COLLECTIBLE_PILL_CRUSHER = Isaac.GetItemIdByName("Pill Crusher");
@@ -6,6 +7,11 @@ CollectibleType.COLLECTIBLE_PILL_CRUSHER = Isaac.GetItemIdByName("Pill Crusher")
 local BloomAmount = 0
 local ActivateBloom = false
 local MonsterTeleTable = {}
+local teleRooms = {}
+local levelSize = 0
+local turretList = {{831,10,-1}, {835,10,-1}, {887,-1,-1}, {951,-1,-1}, {815,-1,-1}, {306,-1,-1}, {837,-1,-1}, {42,-1,-1}, {201,-1,-1}, 
+{202,-1,-1}, {203,-1,-1}, {235,-1,-1}, {236,-1,-1}, {804,-1,-1}, {809,-1,-1}, {68,-1,-1}, {864,-1,-1}, {44,-1,-1}, {218,-1,-1}, {877,-1,-1},
+{893,-1,-1}, {915,-1,-1}, {291,-1,-1}, {295,-1,-1}, {404,-1,-1}, {409,-1,-1}, {903,-1,-1}, {293,-1,-1}, {964,-1,-1},}
 
 local rangedown = 0
 local luckdown = 0
@@ -42,17 +48,71 @@ local function GetData(entity)
 	return nil
 end
 
+local function HereticBattle(enemy)
+	local room = Game():GetRoom()
+	if room:GetType() == RoomType.ROOM_BOSS and room:GetBossID() == 81 and enemy.Type == EntityType.ENTITY_EXORCIST then
+		return true
+	end
+	return false
+end
+
+local function IsTurret(enemy)
+	for _,e in ipairs(turretList) do
+		if e[1] == enemy.Type and (e[2] == -1 or e[2] == enemy.Variant) and (e[3] == -1 or e[3] == enemy.SubType) then
+			return true
+		end
+	end
+	return false
+end
+
 local function GetEnemies(allEnemies, noBosses)
 	local enemies = {}
 	for _,enemy in ipairs(Isaac.GetRoomEntities()) do
 		enemy = enemy:ToNPC()
-		if enemy and (enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy() then
+		if enemy and (enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy() 
+		and not EntityRef(enemy).IsFriendly then
 			if not enemy:IsBoss() or (enemy:IsBoss() and not noBosses) then
-				table.insert(enemies,enemy)
+				if enemy.Type == EntityType.ENTITY_ETERNALFLY then
+					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)
+				end
+				if not HereticBattle(enemy) and not IsTurret(enemy) and entity.Type ~= EntityType.ENTITY_BLOOD_PUPPY then
+					table.insert(enemies,enemy)
+				end
 			end
 		end
 	end
 	return enemies
+end
+
+local function GetTeleRooms(cleared)
+	local level = Game():GetLevel()
+	local rooms = level:GetRooms()
+	local startroom, endroom = 0, rooms.Size - 1
+	levelSize = rooms.Size
+	local roomsTable = {}
+	if level:GetStageType() == StageType.STAGETYPE_REPENTANCE then
+		if level:GetAbsoluteStage() == LevelStage.STAGE2_2 then
+			endroom = endroom - 8
+		end
+	end
+	for i = startroom, endroom do
+		if rooms:Get(i).Data.Type ~= RoomType.ROOM_ANGEL and rooms:Get(i).Data.Type ~= RoomType.ROOM_DEVIL
+		and rooms:Get(i).Data.Type ~= RoomType.ROOM_BOSS and rooms:Get(i).Data.Type ~= RoomType.ROOM_BOSSRUSH then
+			local isMirror = level:GetAbsoluteStage() == LevelStage.STAGE1_2 and level:GetStageType() == StageType.STAGETYPE_REPENTANCE and (i > (endroom + 1) / 2)
+			table.insert(roomsTable,{ListIDX = rooms:Get(i).ListIndex, IsMirror = isMirror})
+		end
+	end
+
+	return roomsTable
+end
+
+local function AddRedRoom(i)
+	local room = Game():GetRoom()
+	table.insert(teleRooms,{ListIDX = i, IsMirror = room:IsMirrorWorld()})
+end
+
+function mod.GetRoomsSize()
+	return teleRooms
 end
 
 function mod:AddPill(player)
@@ -467,18 +527,23 @@ end
 mod:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, mod.BallsOfSteelArmorIndicator)
 
 function mod:NewTeleRoom()
+	local roomIDX = Game():GetLevel():GetCurrentRoomDesc().ListIndex
 	local room = Game():GetRoom()
-	if #MonsterTeleTable > 0 and room:IsClear() then
+	if #MonsterTeleTable > 0 then
 		local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
-		for k,v in ipairs(MonsterTeleTable) do
-			if rng:RandomInt(4) == 1 then
+		local i = 1
+		while i <= #MonsterTeleTable do
+			local v = MonsterTeleTable[i]
+			if v.RoomIDX == roomIDX then
 				local spawnpos = room:FindFreeTilePosition(room:GetRandomPosition(20), 10)
 				local enemy = Game():Spawn(v.Type,v.Variant,spawnpos,Vector.Zero,nil,v.SubType,v.Seed):ToNPC()
 				if v.ChampionIDX ~= -1 then
 					enemy:MakeChampion(v.Seed,v.ChampionIDX,true)
 				end
 				enemy.HitPoints = v.HP
-				table.remove(MonsterTeleTable,k)
+				table.remove(MonsterTeleTable,i)
+			else
+				i = i + 1
 			end
 		end
 	end
@@ -487,15 +552,49 @@ mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, mod.NewTeleRoom)
 
 function mod:NewTeleLevel()
 	MonsterTeleTable = {}
+	teleRooms = GetTeleRooms()
 end
 mod:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, mod.NewTeleLevel)
 
+function mod:SaveRun(save)
+	if save then
+		local save = {Monsters = MonsterTeleTable, Rooms = teleRooms, Size = levelSize}
+		mod:SaveData(json.encode(save))
+	end
+end
+mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, mod.SaveRun)
+
+function mod:RedRoomExpansion()
+	local level = Game():GetLevel()
+	local rooms = level:GetRooms()
+	if levelSize < rooms.Size then
+		for i = levelSize, rooms.Size - 1 do
+			AddRedRoom(i)
+		end
+		levelSize = rooms.Size
+	end
+end
+mod:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, mod.RedRoomExpansion)
+
+function mod:LoadRun(continue)
+	if continue and mod:HasData() then
+		local load = json.decode(mod:LoadData())
+		MonsterTeleTable = load.Monsters
+		teleRooms = load.Rooms
+		levelSize = load.Size
+	else
+		MonsterTeleTable = {}
+		teleRooms = GetTeleRooms()
+	end
+end
+mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, mod.LoadRun)
 
 function mod:TeleportMonsterAnim(npc)
 	local d = GetData(npc)
 	local s = npc:GetSprite()
 	local originScale = s.Scale
 	local originOffset = s.Offset
+	local room = Game():GetRoom()
 	if d.TeleFrames then
 		if d.TeleFrames == 0 or d.TeleFrames == 1 then
 			s.Offset = Vector(originOffset.X, originOffset.Y + 9)
@@ -526,8 +625,16 @@ function mod:TeleportMonsterAnim(npc)
 			s.Scale = Vector(originScale.X * 0.1, originScale.Y * 8)
 		end
 		if d.TeleFrames >= 8 then
-			s.Scale = Vector.Zero
-			table.insert(MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints})
+			s.Scale = Vector(0, originScale.Y * 100)
+			local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+			local idx = nil
+			while idx == nil do
+				idx = teleRooms[rng:RandomInt(#teleRooms) + 1]
+				if room:IsMirrorWorld() ~= idx.IsMirror or idx.ListIDX == Game():GetLevel():GetCurrentRoomDesc().ListIndex then
+					idx = nil
+				end
+			end
+			table.insert(MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints, RoomIDX = idx.ListIDX})
 			npc:Remove()
 		end
 		if d.TeleFrames % 2 == 0 then
@@ -634,7 +741,9 @@ end
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, mod.player_effect)
 
 function mod:spawnPill(rng, pos)
-	local spawnposition = Game():GetRoom():FindFreePickupSpawnPosition(pos)
+	local level = Game():GetLevel()
+	local room = Game():GetRoom()
+	local spawnposition = room:FindFreePickupSpawnPosition(pos)
 	local spawned = false
 	for i=0, Game():GetNumPlayers()-1 do
 		local player = Isaac.GetPlayer(i)
@@ -648,10 +757,8 @@ function mod:spawnPill(rng, pos)
 	end
 end
 mod:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, mod.spawnPill)
-
 --spawns 3 pills on greed mode
 function mod:item_effect()
-	local room = Game():GetRoom()
 	for i=0, Game():GetNumPlayers()-1 do
 		local player = Isaac.GetPlayer(i)
 		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
