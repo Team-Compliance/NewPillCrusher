@@ -530,20 +530,19 @@ function mod:NewTeleRoom()
 	local roomIDX = Game():GetLevel():GetCurrentRoomDesc().ListIndex
 	local room = Game():GetRoom()
 	if #MonsterTeleTable > 0 then
-		local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
-		local i = 1
-		while i <= #MonsterTeleTable do
-			local v = MonsterTeleTable[i]
+		for k,v in ipairs(MonsterTeleTable) do
 			if v.RoomIDX == roomIDX then
 				local spawnpos = room:FindFreeTilePosition(room:GetRandomPosition(20), 10)
+				if v.SpawnPos == nil then
+					MonsterTeleTable[k].SpawnPos = spawnpos
+				else
+					spawnpos = v.SpawnPos
+				end
 				local enemy = Game():Spawn(v.Type,v.Variant,spawnpos,Vector.Zero,nil,v.SubType,v.Seed):ToNPC()
 				if v.ChampionIDX ~= -1 then
 					enemy:MakeChampion(v.Seed,v.ChampionIDX,true)
 				end
 				enemy.HitPoints = v.HP
-				table.remove(MonsterTeleTable,i)
-			else
-				i = i + 1
 			end
 		end
 	end
@@ -575,6 +574,8 @@ function mod:RedRoomExpansion()
 	end
 end
 mod:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, mod.RedRoomExpansion)
+mod:AddCallback(ModCallbacks.MC_USE_ITEM, mod.RedRoomExpansion, CollectibleType.COLLECTIBLE_RED_KEY)
+mod:AddCallback(ModCallbacks.MC_USE_CARD, mod.RedRoomExpansion, Card.CARD_CRACKED_KEY)
 
 function mod:LoadRun(continue)
 	if continue and mod:HasData() then
@@ -753,6 +754,14 @@ function mod:spawnPill(rng, pos)
 				Isaac.Spawn(5, 70, pill.SubType, spawnposition, Vector.Zero, player)
 			end
 			spawned = true
+		end
+	end
+	local i = 1
+	while i <= #MonsterTeleTable do
+		if MonsterTeleTable[i].RoomIDX == level:GetCurrentRoomDesc().ListIndex then
+			table.remove(MonsterTeleTable,i)
+		else
+			i = i + 1
 		end
 	end
 end
