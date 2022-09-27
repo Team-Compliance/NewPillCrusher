@@ -15,8 +15,8 @@
     - I Found Pills = Nothing, gives Isaac a different face --done
     - Puberty = Enemies become random champion variants --done
     - Pretty Fly = Enemies get a fly (2 flies) orbital --done
-    - Range Down = Enemies get a range down effect
-    - Range Up = Enemies get a range up effect
+    - Range Down = Enemies get a range down effect --done
+    - Range Up = Enemies get a range up effect --done
     - Speed Down = Enemies get a speed down effect
     - Speed Up = Enemies get a speed up effect
     - Tears Down Enemies get a tears down effect
@@ -51,6 +51,6 @@
     - Horf! = All enemies shoot an Ipecac shot that can damage themselves and Isaac 
     - Feels like I'm walking on sunshine! = all enemies become invulnerable for 3 (6) seconds
     - Vurp! = Previous Pill Crusher effect. If there wasn't - just play animation and do nothing
-    - Shot Speed Down = Enemies get a shot speed down effect
-    - Shot Speed Up = Enemies get a shot speed up effect
+    - Shot Speed Down = Enemies get a shot speed down effect --done
+    - Shot Speed Up = Enemies get a shot speed up effect --done
     - Experimental Pill = Random pill crusher effect --done

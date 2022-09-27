@@ -72,26 +72,16 @@ end
 ---@param pillEffect PillEffect
 ---@return boolean
 function PillCrusher:HasCrushedPill(pillEffect)
-	for effectInRoom, _ in ipairs(PillCrusher.CrushedPillsRoom) do
-		if effectInRoom == pillEffect then
-			return true
-		end
-	end
-
-	return false
+	return PillCrusher.CrushedPillsRoom[pillEffect] ~= nil
 end
 
 
 ---@param pillEffect PillEffect
 ---@return integer
 function PillCrusher:GetCrushedPillNum(pillEffect)
-	for effectInRoom, num in ipairs(PillCrusher.CrushedPillsRoom) do
-		if effectInRoom == pillEffect then
-			return num
-		end
-	end
-
-	return 0
+	local num = PillCrusher.CrushedPillsRoom[pillEffect]
+	if not num then num = 0 end
+	return num
 end
 
 
@@ -134,7 +124,11 @@ require("pill_crusher_scripts.pill_effects.Percs")
 require("pill_crusher_scripts.pill_effects.PrettyFly")
 require("pill_crusher_scripts.pill_effects.Puberty")
 require("pill_crusher_scripts.pill_effects.QuestionMark")
+require("pill_crusher_scripts.pill_effects.RangeDown")
+require("pill_crusher_scripts.pill_effects.RangeUp")
 require("pill_crusher_scripts.pill_effects.Relax")
+require("pill_crusher_scripts.pill_effects.ShotSpeedDown")
+require("pill_crusher_scripts.pill_effects.ShotSpeedUp")
 require("pill_crusher_scripts.pill_effects.Smaller")
 require("pill_crusher_scripts.pill_effects.Telepills")
 require("pill_crusher_scripts.pill_effects.XLax")
@@ -225,6 +219,7 @@ function mod:UsePillCrusher(_, rng, player)
 		PillCrusher.CrushedPillsRoom[pillEffect] = 1 * mult
 	end
 
+	SFXManager():Play(SoundEffect.SOUND_BONE_SNAP)
 	Game():GetHUD():ShowItemText(name, "")
 	local poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, 0, player.Position, Vector.Zero, nil)
 	poof.Color = Color(1, 1, 1, 1, 0.7, 0.7, 0.7)
