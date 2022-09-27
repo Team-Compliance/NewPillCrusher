@@ -27,7 +27,7 @@
     - 48 Hour Energy =
     - Hematemesis = Applies bleed effect to all enemies and has a chance to spawn 1-2 red hearts near them. Certain types of enemies can drop different hearts that replace the red hearts (for example, Bonys have a chance for Bone Hearts to replace red hearts and Rotten Gapers have a chance for Rotten Hearts to replace red hearts, etc. for the other heart types) --done partially
     - Paralysis = All enemies in the room get paralyzed = --done
-    - I can see forever! =
+    - I can see forever! = Opens all the red rooms adjacent to the room you're currently in 
     - Pheromones =
     - Amnesia =
     - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player
