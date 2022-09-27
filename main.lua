@@ -719,7 +719,6 @@ end
 mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, mod.DamageEffects)
 
 function mod:player_effect()
-
 	for _, entity in pairs(Isaac.GetRoomEntities()) do
 		if entity.Type == 9 then
 			local proj = entity:ToProjectile()
@@ -737,7 +736,6 @@ function mod:player_effect()
 	rangedown = rangedown > 0 and (rangedown - 1) or 0
 	luckdown = luckdown > 0 and (luckdown - 1) or 0
 	tearsdown = tearsdown > 0 and (tearsdown - 1) or 0
-	
 end
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, mod.player_effect)
 
@@ -766,6 +764,7 @@ function mod:spawnPill(rng, pos)
 	end
 end
 mod:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, mod.spawnPill)
+
 --spawns 3 pills on greed mode
 function mod:item_effect()
 	for i=0, Game():GetNumPlayers()-1 do
