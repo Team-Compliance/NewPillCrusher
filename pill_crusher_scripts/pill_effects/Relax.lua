@@ -20,7 +20,7 @@ PillCrusher:AddCallback(ModCallbacks.MC_NPC_UPDATE, Relax)
 
 PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_RELAX, "Re-Lax",
 function (_, rng, _, isHorse)
-    for _,enemy in ipairs(Helpers.GetEnemies(true)) do
+    for _,enemy in ipairs(Helpers.GetEnemies(false)) do
         local mul = isHorse and 3 or 1
         local data = Helpers.GetData(enemy)
         data.RelaxTimer = 90 * mul + rng:RandomInt(10)
