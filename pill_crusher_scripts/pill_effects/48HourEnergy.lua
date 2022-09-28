@@ -1,0 +1,1 @@
+PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_48HOUR_ENERGY, "48 Hour Energy")

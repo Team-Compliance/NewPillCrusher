@@ -1,0 +1,1 @@
+PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_PHEROMONES, "Pheromones")

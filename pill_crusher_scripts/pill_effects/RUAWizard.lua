@@ -1,0 +1,1 @@
+PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_WIZARD, "R U a Wizard?")

@@ -1,0 +1,1 @@
+PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_RETRO_VISION, "Retro Vision")

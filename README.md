@@ -17,15 +17,15 @@
     - Pretty Fly = Enemies get a fly (2 flies) orbital --done
     - Range Down = Enemies get a range down effect --done
     - Range Up = Enemies get a range up effect --done
-    - Speed Down = Enemies get a speed down effect
-    - Speed Up = Enemies get a speed up effect
-    - Tears Down Enemies get a tears down effect
-    - Tears Up = Enemies get a tears up effect
-    - Luck Down = Enemy projectiles have a chance to lose effects
-    - Luck Up = Enemy projectiles have a chance to gain extra effects
+    - Speed Down = Enemies get a speed down effect --Think of something else
+    - Speed Up = Enemies get a speed up effect --Think of something else
+    - Tears Down Enemies get a tears down effect --Think of something else
+    - Tears Up = Enemies get a tears up effect --Think of something else
+    - Luck Down = Enemy projectiles have a chance to lose effects --done
+    - Luck Up = Enemy projectiles have a chance to gain extra effects --done
     - Telepills = Teleports all enemies in a room to a different room --done
     - 48 Hour Energy =
-    - Hematemesis = Applies bleed effect to all enemies and has a chance to spawn 1-2 red hearts near them. Certain types of enemies can drop different hearts that replace the red hearts (for example, Bonys have a chance for Bone Hearts to replace red hearts and Rotten Gapers have a chance for Rotten Hearts to replace red hearts, etc. for the other heart types) --done partially
+    - Hematemesis = Applies bleed effect to all enemies and has a chance to spawn 1-2 red hearts near them. Certain types of enemies can drop different hearts that replace the red hearts (for example, Bonys have a chance for Bone Hearts to replace red hearts and Rotten Gapers have a chance for Rotten Hearts to replace red hearts, etc. for the other heart types) --done
     - Paralysis = All enemies in the room get paralyzed = --done
     - I can see forever! = Opens all the red rooms adjacent to the room you're currently in --done
     - Pheromones =
