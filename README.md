@@ -21,8 +21,8 @@
     - Speed Up = Enemies get a speed up effect
     - Tears Down Enemies get a tears down effect
     - Tears Up = Enemies get a tears up effect
-    - Luck Down =
-    - Luck Up =
+    - Luck Down = Enemy projectiles have a chance to lose effects
+    - Luck Up = Enemy projectiles have a chance to gain extra effects
     - Telepills = Teleports all enemies in a room to a different room --done
     - 48 Hour Energy =
     - Hematemesis = Applies bleed effect to all enemies and has a chance to spawn 1-2 red hearts near them. Certain types of enemies can drop different hearts that replace the red hearts (for example, Bonys have a chance for Bone Hearts to replace red hearts and Rotten Gapers have a chance for Rotten Hearts to replace red hearts, etc. for the other heart types) --done partially
@@ -30,7 +30,7 @@
     - I can see forever! = Opens all the red rooms adjacent to the room you're currently in --done
     - Pheromones =
     - Amnesia =
-    - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player
+    - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player --done
     - R U a wizard? =
     - Percs! = Enemies take half damage --done
     - Addicted! = Enemies get double damage --done
@@ -44,7 +44,7 @@
     - Retro Vision =
     - Friends Till The End! = Flies spawn after an enemy is killed --done
     - X-Lax = Creates a pool of slippery brown creep under every enemy --done
-    - Something's wrong... = A pool of black creep spawns under every enemy that slows down Isaac and enemies
+    - Something's wrong... = A pool of black creep spawns under every enemy that slows down Isaac and enemies --done
     - I'm Drowsy... = Isaac slows down like Death would do him in boss fight --done
     - I'm Excited!!! = Make Isaac faster (but since it would be bs to control we just apply slowdown to everything like Afterbirth+ pre-nerf Stopwatch) --done
     - Gulp! = All trinkets in a room are gulped into the player's inventory  --done

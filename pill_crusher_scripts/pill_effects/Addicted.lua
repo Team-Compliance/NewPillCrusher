@@ -1,7 +1,7 @@
 local Helpers = require("pill_crusher_scripts.Helpers")
 
 
-function DoubleDamage(_, entity, damage, flags, source, cd)
+local function DoubleDamage(_, entity, damage, flags, source, cd)
 	if entity:ToPlayer() then return nil end
 	local data = Helpers.GetData(entity)
     if not data then return end

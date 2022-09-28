@@ -7,5 +7,5 @@ function (player, _, _, isHorse)
         local multi = isHorse and 2 or 1
         cloud.LifeSpan = 180 / multi
         enemy:AddPoison(EntityRef(player), 60 * multi, 3 + player.Damage / 2 * (multi - 1))
-    end    
+    end
 end)

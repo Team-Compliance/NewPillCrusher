@@ -1,7 +1,7 @@
 local Helpers = require("pill_crusher_scripts.Helpers")
 
 
-function HalfDamage(_, entity, damage, flags, source, cd)
+local function HalfDamage(_, entity, damage, flags, source, cd)
 	if entity:ToPlayer() then return nil end
 	local data = Helpers.GetData(entity)
     if not data then return end
@@ -21,7 +21,7 @@ function HalfDamage(_, entity, damage, flags, source, cd)
         data.TookHD = nil
     end
 end
-PillCrusher:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, DoubleDamage)
+PillCrusher:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, HalfDamage)
 
 
 PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_PERCS, "Percs!",

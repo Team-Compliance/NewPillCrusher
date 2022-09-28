@@ -1,27 +1,27 @@
 local Helpers = require("pill_crusher_scripts.Helpers")
 
 local json = require("json")
-local MonsterTeleTable = {}
-local teleRooms = {}
-local levelSize
+-- local PillCrusher.MonsterTeleTable = {}
+-- local PillCrusher.teleRooms = {}
+-- local PillCrusher.levelSize
 
 
 local function AddRedRoom(i)
 	local room = Game():GetRoom()
-	table.insert(teleRooms, {ListIDX = i, IsMirror = room:IsMirrorWorld()})
+	table.insert(PillCrusher.teleRooms, {ListIDX = i, IsMirror = room:IsMirrorWorld()})
 end
 
 
-local function GetRoomsSize()
-	return teleRooms
-end
+-- local function GetRoomsSize()
+-- 	return PillCrusher.teleRooms
+-- end
 
 
 local function GetTeleRooms(cleared)
 	local level = Game():GetLevel()
 	local rooms = level:GetRooms()
 	local startroom, endroom = 0, rooms.Size - 1
-	levelSize = rooms.Size
+	PillCrusher.levelSize = rooms.Size
 	local roomsTable = {}
 	if level:GetStageType() == StageType.STAGETYPE_REPENTANCE then
 		if level:GetAbsoluteStage() == LevelStage.STAGE2_2 then
@@ -41,8 +41,8 @@ end
 
 
 local function NewTeleLevel()
-	MonsterTeleTable = {}
-	teleRooms = GetTeleRooms()
+	PillCrusher.MonsterTeleTable = {}
+	PillCrusher.teleRooms = GetTeleRooms()
 end
 PillCrusher:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, NewTeleLevel)
 
@@ -50,12 +50,12 @@ PillCrusher:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, NewTeleLevel)
 local function NewTeleRoom()
 	local roomIDX = Game():GetLevel():GetCurrentRoomDesc().ListIndex
 	local room = Game():GetRoom()
-	if #MonsterTeleTable > 0 then
-		for k,v in ipairs(MonsterTeleTable) do
+	if #PillCrusher.MonsterTeleTable > 0 then
+		for k,v in ipairs(PillCrusher.MonsterTeleTable) do
 			if v.RoomIDX == roomIDX then
 				local spawnpos = room:FindFreeTilePosition(room:GetRandomPosition(20), 10)
 				if v.SpawnPos == nil then
-					MonsterTeleTable[k].SpawnPos = spawnpos
+					PillCrusher.MonsterTeleTable[k].SpawnPos = spawnpos
 				else
 					spawnpos = v.SpawnPos
 				end
@@ -71,28 +71,28 @@ end
 PillCrusher:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, NewTeleRoom)
 
 
-local function SpawnPill()
+local function CleanRoom()
     local level = Game():GetLevel()
 	local i = 1
-	while i <= #MonsterTeleTable do
-		if MonsterTeleTable[i].RoomIDX == level:GetCurrentRoomDesc().ListIndex then
-			table.remove(MonsterTeleTable,i)
+	while i <= #PillCrusher.MonsterTeleTable do
+		if PillCrusher.MonsterTeleTable[i].RoomIDX == level:GetCurrentRoomDesc().ListIndex then
+			table.remove(PillCrusher.MonsterTeleTable,i)
 		else
 			i = i + 1
 		end
 	end
 end
-PillCrusher:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, SpawnPill)
+PillCrusher:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, CleanRoom)
 
 
 function RedRoomExpansion()
 	local level = Game():GetLevel()
 	local rooms = level:GetRooms()
-	if levelSize < rooms.Size then
-		for i = levelSize, rooms.Size - 1 do
+	if PillCrusher.levelSize < rooms.Size then
+		for i = PillCrusher.levelSize, rooms.Size - 1 do
 			AddRedRoom(i)
 		end
-		levelSize = rooms.Size
+		PillCrusher.levelSize = rooms.Size
 	end
 end
 PillCrusher:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, RedRoomExpansion)
@@ -102,7 +102,7 @@ PillCrusher:AddCallback(ModCallbacks.MC_USE_CARD, RedRoomExpansion, Card.CARD_CR
 
 function SaveRun(_, save)
 	if save then
-		local toSave = {Monsters = MonsterTeleTable, Rooms = teleRooms, Size = levelSize}
+		local toSave = {Monsters = PillCrusher.MonsterTeleTable, Rooms = PillCrusher.teleRooms, Size = PillCrusher.levelSize}
 		PillCrusher:SaveData(json.encode(toSave))
 	end
 end
@@ -112,12 +112,12 @@ PillCrusher:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveRun)
 function LoadRun(_, continue)
 	if continue and PillCrusher:HasData() then
 		local load = json.decode(PillCrusher:LoadData())
-		MonsterTeleTable = load.Monsters
-		teleRooms = load.Rooms
-		levelSize = load.Size
+		PillCrusher.MonsterTeleTable = load.Monsters
+		PillCrusher.teleRooms = load.Rooms
+		PillCrusher.levelSize = load.Size
 	else
-		MonsterTeleTable = {}
-		teleRooms = GetTeleRooms()
+		PillCrusher.MonsterTeleTable = {}
+		PillCrusher.teleRooms = GetTeleRooms()
 	end
 end
 PillCrusher:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, LoadRun)
@@ -165,13 +165,13 @@ local function TeleportMonsterAnim(_, npc)
 
         local idx = nil
         while idx == nil do
-            idx = teleRooms[rng:RandomInt(#teleRooms) + 1]
+            idx = PillCrusher.teleRooms[rng:RandomInt(#PillCrusher.teleRooms) + 1]
             if room:IsMirrorWorld() ~= idx.IsMirror or idx.ListIDX == Game():GetLevel():GetCurrentRoomDesc().ListIndex then
                 idx = nil
             end
         end
 
-        table.insert(MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints, RoomIDX = idx.ListIDX})
+        table.insert(PillCrusher.MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints, RoomIDX = idx.ListIDX})
         npc:Remove()
     end
 
