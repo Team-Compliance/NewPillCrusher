@@ -8,6 +8,6 @@ function (_, _, _, isHorse)
         local creep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_SLIPPERY_BROWN, 0, enemy.Position, Vector.Zero, nil)
         creep = creep:ToEffect()
 
-        creep.SpriteScale = creep.SpriteScale * mul
+        creep.SpriteScale = creep.SpriteScale * 2.5 * mul
     end
 end)

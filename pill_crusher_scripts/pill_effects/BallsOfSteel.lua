@@ -36,8 +36,8 @@ PillCrusher:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, BallsOfSteelArmorIndica
 PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_BALLS_OF_STEEL, "Balls Of Steel",
 function (_, _, _, isHorse)
     for _,enemy in ipairs(Helpers.GetEnemies(false)) do
-        local mult = isHorse and 1.5 or 3
+        local mult = isHorse and 0.2 or 0.1
         local data = Helpers.GetData(enemy)
-        data.Armor = enemy.MaxHitPoints / mult
+        data.Armor = enemy.MaxHitPoints * mult
     end
 end)

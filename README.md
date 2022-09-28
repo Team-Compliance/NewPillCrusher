@@ -5,7 +5,7 @@
 
   - Effects
     - Bad Gas = Enemies fart poisonous gas and take damage. The poisonous gas will harm the player if they stand in it for too long. Horse pill: poison deals 3 + half player damage --done
-    - Bad Trip = Enemies take 1/10 of current damage. Horse pill: removes 1/5 of current hp. --done
+    - Bad Trip = Enemies take 1/10 of current hp. Horse pill: removes 1/5 of current hp. --done
     - Balls of Steel = Enemies get 1/10 (1/5) shield-like effect. Damaging them won't indicate that they were damaged until "shield" hp is gone --done
     - Bombs are Key = All bombs in a room are converted into keys and vice versa. Horse pill: pickups convert into double packs. --done
     - Explosive Diarrhea = Enemies fart out troll bombs --done
