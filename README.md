@@ -1,7 +1,8 @@
 # To-do list
 - Pill Crusher rework
   - ??? pills get their names revealed after using the item on them. Splash text also appears when a pill is crushed --done
-  - Upon using Pill Crusher, a dust particle effect plays
+  - Upon using Pill Crusher, a dust particle effect plays and there's an animation of it crushing 
+  - Endless Nameless synergy = Has a 25% chance of creating a duplicate pill after use 
 
   - Effects
     - Bad Gas = Enemies fart poisonous gas and take damage. The poisonous gas will harm the player if they stand in it for too long. Horse pill: poison deals 3 + half player damage --done
