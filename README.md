@@ -11,17 +11,17 @@
     - Bombs are Key = All bombs in a room are converted into keys and vice versa. Horse pill: pickups convert into double packs. --done
     - Explosive Diarrhea = Enemies fart out troll bombs --done
     - Full Health = Enemies get healed to full HP --done
-    - Health Down = Enemies get 15HP removed from them (30 with horse pill). If HP is lower than 15 (30) then it removes half of current hp (~= 67% of current hp) --done
-    - Health Up = Enemeis gain 15HP (30 with horse pill) --done
+    - Health Down = Enemies affected lose 15HP for the rest of the run (30 with horse pill). If HP is lower than 15 (30) then it removes half of current hp (~= 67% of current hp) --done
+    - Health Up = Enemies affected gain 15HP for the rest of the run (30 with horse pill) --done
     - I Found Pills = Nothing, gives Isaac a different face --done
     - Puberty = Enemies become random champion variants --done
     - Pretty Fly = Enemies get a fly (2 flies) orbital --done
     - Range Down = Enemies get a range down effect --done
     - Range Up = Enemies get a range up effect --done
-    - Speed Down = Enemies get a speed down effect --Think of something else
-    - Speed Up = Enemies get a speed up effect --Think of something else
-    - Tears Down Enemies get a tears down effect --Think of something else
-    - Tears Up = Enemies get a tears up effect --Think of something else
+    - Speed Down = --Think of something else
+    - Speed Up = --Think of something else
+    - Tears Down = --Think of something else
+    - Tears Up = --Think of something else
     - Luck Down = Enemy projectiles have a chance to lose effects --done
     - Luck Up = Enemy projectiles have a chance to gain extra effects --done
     - Telepills = Teleports all enemies in a room to a different room --done
@@ -30,7 +30,7 @@
     - Paralysis = All enemies in the room get paralyzed = --done
     - I can see forever! = Opens all the red rooms adjacent to the room you're currently in --done
     - Pheromones =
-    - Amnesia =
+    - Amnesia = Gives the player a camo undies-like effect
     - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player --done
     - R U a wizard? =
     - Percs! = Enemies take half damage --done
@@ -42,7 +42,7 @@
     - Infested! = Destroys all poop in the room and spawns an enemy spider in each destroyed poop --done
     - Infested? = Applies slowness effect to all enemies in room for a couple of seconds. If they are killed while slowed, they explode into a random amount of blue spiders (1-3) --done
     - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds. --done
-    - Retro Vision =
+    - Retro Vision = No unique pill crusher effect. Pixelizes the screen
     - Friends Till The End! = Flies spawn after an enemy is killed --done
     - X-Lax = Creates a pool of slippery brown creep under every enemy --done
     - Something's wrong... = A pool of black creep spawns under every enemy that slows down Isaac and enemies --done
