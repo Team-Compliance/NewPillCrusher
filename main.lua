@@ -252,6 +252,11 @@ function mod:UsePillCrusher(_, rng, player)
 
 	if not isGolden or rng:RandomInt(100) < 10 then
 		player:SetPill(0, 0)
+
+		if player:HasTrinket(TrinketType.TRINKET_ENDLESS_NAMELESS) and rng:RandomInt(100) < 25 then
+			local spawningPos = Game():GetRoom():FindFreePickupSpawnPosition(player.Position, 1, true)
+			Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, pillColor, spawningPos, Vector.Zero, nil)
+		end
 	end
 
 	return true
