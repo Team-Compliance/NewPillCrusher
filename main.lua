@@ -244,7 +244,7 @@ function mod:UsePillCrusher(_, rng, player)
 		PillCrusher.CrushedPillsRoom[pillEffect] = 1 * mult
 	end
 
-	SFXManager():Play(SoundEffect.SOUND_BONE_SNAP)
+	SFXManager():Play(SoundEffect.SOUND_BONE_BREAK)
 	Game():GetHUD():ShowItemText(name, "")
 	local poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, 0, player.Position, Vector.Zero, nil)
 	poof.Color = Color(1, 1, 1, 1, 0.7, 0.7, 0.7)
