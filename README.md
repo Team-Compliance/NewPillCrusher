@@ -30,7 +30,7 @@
     - Paralysis = All enemies in the room get paralyzed = --done
     - I can see forever! = Opens all the red rooms adjacent to the room you're currently in --done
     - Pheromones =
-    - Amnesia = Gives the player a camo undies-like effect
+    - Amnesia = Gives the player a camo undies-like effect --done
     - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player --done
     - R U a wizard? =
     - Percs! = Enemies take half damage --done
@@ -42,7 +42,7 @@
     - Infested! = Destroys all poop in the room and spawns an enemy spider in each destroyed poop --done
     - Infested? = Applies slowness effect to all enemies in room for a couple of seconds. If they are killed while slowed, they explode into a random amount of blue spiders (1-3) --done
     - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds. --done
-    - Retro Vision = No unique pill crusher effect. Pixelizes the screen
+    - Retro Vision = No unique pill crusher effect. Pixelizes the screen --done
     - Friends Till The End! = Flies spawn after an enemy is killed --done
     - X-Lax = Creates a pool of slippery brown creep under every enemy --done
     - Something's wrong... = A pool of black creep spawns under every enemy that slows down Isaac and enemies --done
