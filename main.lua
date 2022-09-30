@@ -53,6 +53,7 @@ PillCrusher.LastPillUsed = -1
 PillCrusher.MonsterTeleTable = {}
 PillCrusher.teleRooms = {}
 PillCrusher.levelSize = 0
+PillCrusher.HPUpDownEnemies = {}
 
 ---@param pillEffect PillEffect
 ---@param name string
@@ -343,7 +344,13 @@ end
 
 function mod:SaveRun(save)
 	if save then
-		local toSave = {LastPillUsed = PillCrusher.LastPillUsed, Monsters = PillCrusher.MonsterTeleTable, Rooms = PillCrusher.teleRooms, Size = PillCrusher.levelSize}
+		local toSave = {
+			LastPillUsed = PillCrusher.LastPillUsed,
+			Monsters = PillCrusher.MonsterTeleTable,
+			Rooms = PillCrusher.teleRooms,
+			Size = PillCrusher.levelSize,
+			HPUpDownEnemies = PillCrusher.HPUpDownEnemies
+		}
 		PillCrusher:SaveData(json.encode(toSave))
 	end
 end
@@ -357,10 +364,12 @@ function mod:LoadRun(continue)
 		PillCrusher.MonsterTeleTable = load.Monsters
 		PillCrusher.teleRooms = load.Rooms
 		PillCrusher.levelSize = load.Size
+		PillCrusher.HPUpDownEnemies = load.HPUpDownEnemies
 	else
 		PillCrusher.LastPillUsed = -1
 		PillCrusher.MonsterTeleTable = {}
 		PillCrusher.teleRooms = GetTeleRooms()
+		PillCrusher.HPUpDownEnemies = {}
 	end
 end
 mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, mod.LoadRun)
