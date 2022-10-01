@@ -247,7 +247,8 @@ function mod:UsePillCrusher(_, rng, player)
 	SFXManager():Play(SoundEffect.SOUND_BONE_BREAK)
 	Game():GetHUD():ShowItemText(name, "")
 	local poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, 0, player.Position, Vector.Zero, nil)
-	poof.Color = Color(1, 1, 1, 1, 0.7, 0.7, 0.7)
+	poof.Color = Color(1, 1, 1, 1, 0.5, 0.5, 0.5)
+	poof.SpriteScale = Vector(0.6, 0.6)
 	ActivateBloom = true
 
 	if not isGolden or rng:RandomInt(100) < 10 then
@@ -259,7 +260,11 @@ function mod:UsePillCrusher(_, rng, player)
 		end
 	end
 
-	return true
+	local pillCrushingAnim = Sprite()
+	pillCrushingAnim:Load("gfx/pillcrusher_active_anim.anm2", true)
+	pillCrushingAnim:Play("Idle", true)
+
+	player:AnimatePickup(pillCrushingAnim)
 end
 mod:AddCallback(ModCallbacks.MC_USE_ITEM, mod.UsePillCrusher, CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 
