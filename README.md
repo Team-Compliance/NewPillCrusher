@@ -1,57 +1,140 @@
 # To-do list
 - Pill Crusher rework
   - ??? pills get their names revealed after using the item on them. Splash text also appears when a pill is crushed --done
-  - Upon using Pill Crusher, a dust particle effect plays and there's an animation of it crushing
-  - Endless Nameless synergy = Has a 25% chance of creating a duplicate pill after use
+  - Upon using Pill Crusher, a dust particle effect plays and there's an animation of it crushing --done
+  - Endless Nameless synergy = Has a 25% chance of creating a duplicate pill after use --done
 
   - Effects
-    - Bad Gas = Enemies fart poisonous gas and take damage. The poisonous gas will harm the player if they stand in it for too long. Horse pill: poison deals 3 + half player damage --done
-    - Bad Trip = Enemies take 1/10 of current hp. Horse pill: removes 1/5 of current hp. --done
-    - Balls of Steel = Enemies get 1/10 (1/5) shield-like effect. Damaging them won't indicate that they were damaged until "shield" hp is gone --done
-    - Bombs are Key = All bombs in a room are converted into keys and vice versa. Horse pill: pickups convert into double packs. --done
+    - Bad Gas = Enemies fart poisonous gas and take damage. The poisonous gas will harm the player if they stand in it for too long --done
+        - Horse pill = The poison deals 3 + half player damage --done
+
+    - Bad Trip = Enemies take 1/10 of current hp --done
+        - Horse pill = Removes 1/5 of current hp --done
+
+    - Balls of Steel = Enemies get 1/10 shield-like effect. Damaging them won't indicate that they were damaged until "shield" hp is gone --done
+        - Horse Pill = The effect is increased to 1/5 HP --done
+
+    - Bombs are Key = All bombs in a room are converted into keys and vice versa --done
+        - Horse pill = Pickups convert into double packs. --done
+
     - Explosive Diarrhea = Enemies fart out troll bombs --done
+        - Horse Pill = 1-room Mama Mega effect? 
+
     - Full Health = Enemies get healed to full HP --done
-    - Health Down = Enemies affected lose 15HP for the rest of the run (30 with horse pill). If HP is lower than 15 (30) then it removes half of current hp (~= 67% of current hp) --done
+        - Horse Pill = Full heal + The HP cap of enemies affected is increased by 15
+
+    - Health Down = Enemies affected lose 15HP for the rest of the run. If HP is lower than 15 then it removes half of current hp (~= 67% of current hp) --done
+        - Horse Pill = 30HP lost instead of 15HP
+
     - Health Up = Enemies affected gain 15HP for the rest of the run (30 with horse pill) --done
+        - Horse Pill = 30HP gained instead of 15HP
+
     - I Found Pills = Nothing, gives Isaac a different face --done
+        - Horse Pill = Nothing, gives Isaac the horse pill face
+
     - Puberty = Enemies become random champion variants --done
-    - Pretty Fly = Enemies get a fly (2 flies) orbital --done
+        - Horse Pill = Nothing?
+
+    - Pretty Fly = Enemies get a fly orbital --done
+        - Horse Pill = 2 fly orbitals
+
     - Range Down = Enemies get a range down effect --done
+        - Horse Pill = Effect is increased 
+
     - Range Up = Enemies get a range up effect --done
-    - Speed Down = --Think of something else
-    - Speed Up = --Think of something else
-    - Tears Down = --Think of something else
-    - Tears Up = --Think of something else
+        - Horse Pill = Effect is increased 
+
+    - Speed Down = 
+
+    - Speed Up = 
+
+    - Tears Down = 
+
+    - Tears Up = 
+
     - Luck Down = Enemy projectiles have a chance to lose effects --done
+
     - Luck Up = Enemy projectiles have a chance to gain extra effects --done
+
     - Telepills = Teleports all enemies in a room to a different room --done
-    - 48 Hour Energy =
+        - Horse Pill = Teleports the enemies out of the game (automatic room clear)
+
+    - 48 Hour Energy = Killing a low HP enemy spawns a micro battery in a room. Killing an average HP enemy spawns a lil' battery in a room. Killing a miniboss or boss spawns a mega battery in a room
+        - Horse Pill = Battery tiers are upgraded. Micro Batteries -> Lil' Batteries. Lil' Batteries -> Mega Batteries. Mega Batteries -> Golden Batteries
+
     - Hematemesis = Applies bleed effect to all enemies and has a chance to spawn 1-2 red hearts near them. Certain types of enemies can drop different hearts that replace the red hearts (for example, Bonys have a chance for Bone Hearts to replace red hearts and Rotten Gapers have a chance for Rotten Hearts to replace red hearts, etc. for the other heart types) --done
+        - Horse Pill = 2-4 hearts spawn instead of 1-2
+
     - Paralysis = All enemies in the room get paralyzed = --done
+        - Horse Pill = Effect lasts twice as long
+
     - I can see forever! = Opens all the red rooms adjacent to the room you're currently in --done
-    - Pheromones =
+        - Horse Pill = Also reveals the location of the Ultra Secret Room
+
+    - Pheromones = No difference from the normal pill effect. Charms all enemies in a room
+        - Horse Pill = No difference from the normal effect. Permanently charms all enemies in a room, making them friendly
+
     - Amnesia = Gives the player a camo undies-like effect --done
+        - Horse Pill = Effect lasts twice as long
+
     - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player --done
+        - Horse Pill = The creep lasts twice as long
+
     - R U a wizard? =
+
     - Percs! = Enemies take half damage --done
+        - Horse Pill = Nothing?
+
     - Addicted! = Enemies get double damage --done
-    - Re-lax = Enemies spawn poop wherever they walk for a few seconds --done
+        - Horse Pill = Nothing?
+
+    - Re-lax = Destroys all poop in the room and spawns 1-3 friendly Dips for each poop destroyed. All poop synergies are present
+        - Horse Pill = 3-6 Dips are spawned per poop
+
     - ??? = Enemies get confusion --done
-    - One makes you larger = Enemies get larger. Their hitboxes don't increase --done
-    - One makes you small = Enemies get smaller. Their hitboxes shrink --done
+        - Horse Pill = Effect lasts twice as long
+
+    - One makes you larger = Enemies get larger and destroy obstacles on contact like Stompy (5  seconds)
+        - Horse Pill = Effect lasts twice as long (10 seconds)
+
+    - One makes you small = Enemies get the God's Flesh effect (5  seconds)
+        - Horse Pill = Effect lasts twice as long (10 seconds)
+
     - Infested! = Destroys all poop in the room and spawns an enemy spider in each destroyed poop --done
+
     - Infested? = Applies slowness effect to all enemies in room for a couple of seconds. If they are killed while slowed, they explode into a random amount of blue spiders (1-3) --done
-    - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds. --done
-    - Retro Vision = No unique pill crusher effect. Pixelizes the screen --done
+
+    - Power Pill! = Isaac gets fear effect and takes double damage for 3 (6) seconds. --Think of something else?
+
+    - Retro Vision = No unique pill crusher effect. Pixelizes the screen for 30 seconds --done
+        - Horse Pill = No unique effect. Lasts for 90 seconds instead of 30
+
     - Friends Till The End! = Flies spawn after an enemy is killed --done
-    - X-Lax = Creates a pool of slippery brown creep under every enemy --done
+
+    - X-Lax = Creates a pool of slippery brown creep under every enemy. If you stand in it, you get +1 damage and +1.5 fire rate like Tainted Blue Baby. The creep synergizes with other poops if it's in contact with them also like Tainted Blue Baby and IBS 
+        - Horse Pill = The creep lasts twice as long
+
     - Something's wrong... = A pool of black creep spawns under every enemy that slows down Isaac and enemies --done
-    - I'm Drowsy... = Isaac slows down like Death would do him in boss fight --done
-    - I'm Excited!!! = Make Isaac faster (but since it would be bs to control we just apply slowdown to everything like Afterbirth+ pre-nerf Stopwatch) --done
+        - Horse Pill = The creep lasts twice as long
+
+    - I'm Drowsy... = Isaac slows down like Death would do him in boss fight --Think of something else?
+
+    - I'm Excited!!! = Make Isaac faster (but since it would be bs to control we just apply slowdown to everything like Afterbirth+ pre-nerf Stopwatch) --Think of something else?
+
     - Gulp! = All trinkets in a room are gulped into the player's inventory  --done
+        - Horse Pill = The trinkets are converted to Golden Trinkets
+
     - Horf! = All enemies shoot an Ipecac shot that can damage themselves and Isaac --done
-    - Feels like I'm walking on sunshine! = all enemies become invulnerable for 3 (6) seconds --done
+
+    - Feels like I'm walking on sunshine! = all enemies become invulnerable for 3 seconds --done
+        - Horse Pill = Effect length is doubled to 6 seconds --done
+
     - Vurp! = Previous Pill Crusher effect. If there wasn't - just play animation and do nothing --done
+
     - Shot Speed Down = Enemies get a shot speed down effect --done
+        - Horse Pill = Effect is increased 
+
     - Shot Speed Up = Enemies get a shot speed up effect --done
+        - Horse Pill = Effect is increased 
+
     - Experimental Pill = Random pill crusher effect --done
