@@ -54,19 +54,22 @@ function (_, rng, _, isHorse)
     for _,enemy in ipairs(Helpers.GetEnemies(false)) do
         enemy:AddEntityFlags(EntityFlag.FLAG_BLEED_OUT)
         if rng:RandomInt(100) < 30 then
-            for _ = 1, (rng:RandomInt(2) + 1) do
-                local spawningPos = Game():GetRoom():FindFreePickupSpawnPosition(enemy.Position)
+            local subtype = HeartSubType.HEART_FULL
 
-                local subtype = HeartSubType.HEART_FULL
-
-                if rng:RandomInt(100) < 10 or isHorse then
-                    for _, specialHeartEntity in ipairs(SpecialHearts) do
-                        if enemy.Type == specialHeartEntity.type and enemy.Variant == specialHeartEntity.variant then
-                            subtype = specialHeartEntity.heart
-                            break
-                        end
+            if rng:RandomInt(100) < 10 or isHorse then
+                for _, specialHeartEntity in ipairs(SpecialHearts) do
+                    if enemy.Type == specialHeartEntity.type and enemy.Variant == specialHeartEntity.variant then
+                        subtype = specialHeartEntity.heart
+                        break
                     end
                 end
+            end
+
+            local num = rng:RandomInt(2) + 1
+            if isHorse then num = rng:RandomInt(3) + 2 end
+
+            for _ = 1, num do
+                local spawningPos = Game():GetRoom():FindFreePickupSpawnPosition(enemy.Position)
 
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_HEART, subtype, spawningPos,Vector.Zero,nil)
             end

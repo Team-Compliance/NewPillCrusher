@@ -100,27 +100,27 @@ PillCrusher:AddCallback(ModCallbacks.MC_USE_ITEM, RedRoomExpansion, CollectibleT
 PillCrusher:AddCallback(ModCallbacks.MC_USE_CARD, RedRoomExpansion, Card.CARD_CRACKED_KEY)
 
 
-function SaveRun(_, save)
-	if save then
-		local toSave = {Monsters = PillCrusher.MonsterTeleTable, Rooms = PillCrusher.teleRooms, Size = PillCrusher.levelSize}
-		PillCrusher:SaveData(json.encode(toSave))
-	end
-end
-PillCrusher:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveRun)
+-- function SaveRun(_, save)
+-- 	if save then
+-- 		local toSave = {Monsters = PillCrusher.MonsterTeleTable, Rooms = PillCrusher.teleRooms, Size = PillCrusher.levelSize}
+-- 		PillCrusher:SaveData(json.encode(toSave))
+-- 	end
+-- end
+-- PillCrusher:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveRun)
 
 
-function LoadRun(_, continue)
-	if continue and PillCrusher:HasData() then
-		local load = json.decode(PillCrusher:LoadData())
-		PillCrusher.MonsterTeleTable = load.Monsters
-		PillCrusher.teleRooms = load.Rooms
-		PillCrusher.levelSize = load.Size
-	else
-		PillCrusher.MonsterTeleTable = {}
-		PillCrusher.teleRooms = GetTeleRooms()
-	end
-end
-PillCrusher:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, LoadRun)
+-- function LoadRun(_, continue)
+-- 	if continue and PillCrusher:HasData() then
+-- 		local load = json.decode(PillCrusher:LoadData())
+-- 		PillCrusher.MonsterTeleTable = load.Monsters
+-- 		PillCrusher.teleRooms = load.Rooms
+-- 		PillCrusher.levelSize = load.Size
+-- 	else
+-- 		PillCrusher.MonsterTeleTable = {}
+-- 		PillCrusher.teleRooms = GetTeleRooms()
+-- 	end
+-- end
+-- PillCrusher:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, LoadRun)
 
 
 local function TeleportMonsterAnim(_, npc)
@@ -161,17 +161,19 @@ local function TeleportMonsterAnim(_, npc)
     end
     if data.TeleFrames >= 8 then
         sprite.Scale = Vector(0, originScale.Y * 100)
-        local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+		if not data.WasHorseTelePilled then
+			local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 
-        local idx = nil
-        while idx == nil do
-            idx = PillCrusher.teleRooms[rng:RandomInt(#PillCrusher.teleRooms) + 1]
-            if room:IsMirrorWorld() ~= idx.IsMirror or idx.ListIDX == Game():GetLevel():GetCurrentRoomDesc().ListIndex then
-                idx = nil
-            end
-        end
+			local idx = nil
+			while idx == nil do
+				idx = PillCrusher.teleRooms[rng:RandomInt(#PillCrusher.teleRooms) + 1]
+				if room:IsMirrorWorld() ~= idx.IsMirror or idx.ListIDX == Game():GetLevel():GetCurrentRoomDesc().ListIndex then
+					idx = nil
+				end
+			end
 
-        table.insert(PillCrusher.MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints, RoomIDX = idx.ListIDX})
+			table.insert(PillCrusher.MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints, RoomIDX = idx.ListIDX})
+		end
         npc:Remove()
     end
 
@@ -191,12 +193,14 @@ PillCrusher:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, TeleportMonsterAnim)
 
 
 PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_TELEPILLS, "Telepills",
-function ()
+function (_, _, _, isHorse)
     for _,enemy in ipairs(Helpers.GetEnemies(true,true)) do
         enemy:AddEntityFlags(EntityFlag.FLAG_FREEZE)
         enemy.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
         enemy.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
-        Helpers.GetData(enemy).TeleFrames = 0
+        local data = Helpers.GetData(enemy)
+		data.TeleFrames = 0
+		data.WasHorseTelePilled = isHorse
     end
 
     SFXManager():Play(SoundEffect.SOUND_TELEPILLS,1,0)

@@ -187,22 +187,29 @@ mod:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, mod.BloomShader)
 ---@param rng RNG
 ---@param player EntityPlayer
 function mod:UsePillCrusher(_, rng, player)
-	local pillColor = player:GetPill(0)
-	if pillColor == 0 then return end
+	local truePillColor = player:GetPill(0)
+	if truePillColor == 0 then return end
 
+	local pillColorToCheckEffect = truePillColor
 	local itemPool = Game():GetItemPool()
-	local pillEffect = itemPool:GetPillEffect(pillColor, player)
+	local pillEffect = itemPool:GetPillEffect(pillColorToCheckEffect, player)
 
 	--Fiend folio compatibility bs (ffs why wouldn't they just make it an api)
 	if FiendFolio then
-		if isFFPill[pillColor] then
-			pillColor = FiendFolio.savedata.run.PillCopies[tostring(pillColor)]
-			pillEffect = itemPool:GetPillEffect(pillColor, player)
-			FiendFolio.savedata.run.IdentifiedRunPills[tostring(pillColor)] = true
+		if isFFPill[truePillColor] then
+			if truePillColor > PillColor.PILL_GIANT_FLAG then
+				pillColorToCheckEffect = FiendFolio.savedata.run.PillCopies[tostring(truePillColor-PillColor.PILL_GIANT_FLAG)]
+				pillEffect = itemPool:GetPillEffect(pillColorToCheckEffect, player)
+				FiendFolio.savedata.run.IdentifiedRunPills[tostring(pillColorToCheckEffect)] = true
+			else
+				pillColorToCheckEffect = FiendFolio.savedata.run.PillCopies[tostring(truePillColor)]
+				pillEffect = itemPool:GetPillEffect(pillColorToCheckEffect, player)
+				FiendFolio.savedata.run.IdentifiedRunPills[tostring(pillColorToCheckEffect)] = true
+			end
 		end
 	end
 
-	itemPool:IdentifyPill(pillColor)
+	itemPool:IdentifyPill(pillColorToCheckEffect)
 
 	if pillEffect == PillEffect.PILLEFFECT_VURP and PillCrusher.LastPillUsed >= 0 then
 		pillEffect = PillCrusher.LastPillUsed
@@ -213,14 +220,10 @@ function mod:UsePillCrusher(_, rng, player)
 
 	local crushedPillEffect = PillCrusher.CrushedPillEffects[pillEffect]
 
-	local isGolden = pillColor == PillColor.PILL_GOLD or pillColor == (PillColor.PILL_GOLD | PillColor.PILL_GIANT_FLAG)
-	local isHorse = pillColor & PillColor.PILL_GIANT_FLAG == PillColor.PILL_GIANT_FLAG
+	local isGolden = truePillColor == PillColor.PILL_GOLD or truePillColor == (PillColor.PILL_GOLD | PillColor.PILL_GIANT_FLAG)
+	local isHorse = truePillColor & PillColor.PILL_GIANT_FLAG == PillColor.PILL_GIANT_FLAG
 
-	if pillEffect == PillEffect.PILLEFFECT_EXPERIMENTAL then
-		crushedPillEffect, pillEffect = table.unpack(GetRandomPillCrusherEffect(rng))
-	end
-
-	if isGolden then
+	if isGolden or pillEffect == PillEffect.PILLEFFECT_EXPERIMENTAL then
 		crushedPillEffect, pillEffect = table.unpack(GetRandomPillCrusherEffect(rng))
 	end
 
@@ -234,7 +237,7 @@ function mod:UsePillCrusher(_, rng, player)
 			name = crushedPillEffect.name
 		end
 
-		crushedPillEffect.func(player, rng, isGolden, isHorse, pillColor)
+		crushedPillEffect.func(player, rng, isGolden, isHorse, truePillColor)
 	end
 
 	local mult = isHorse and 2 or 1
@@ -256,7 +259,7 @@ function mod:UsePillCrusher(_, rng, player)
 
 		if player:HasTrinket(TrinketType.TRINKET_ENDLESS_NAMELESS) and rng:RandomInt(100) < 25 then
 			local spawningPos = Game():GetRoom():FindFreePickupSpawnPosition(player.Position, 1, true)
-			Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, pillColor, spawningPos, Vector.Zero, nil)
+			Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, truePillColor, spawningPos, Vector.Zero, nil)
 		end
 	end
 

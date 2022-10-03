@@ -11,11 +11,11 @@ function (_, _, _, isHorse)
         creep = creep:ToEffect()
         playercreep = playercreep:ToEffect()
 
-        creep.SpriteScale = creep.SpriteScale * 2.5 * mul
-        playercreep.SpriteScale = playercreep.SpriteScale * 2.5 * mul
+        creep.SpriteScale = creep.SpriteScale * 2.5
+        playercreep.SpriteScale = playercreep.SpriteScale * 2.5
         playercreep.Visible = false
 
-        creep.Timeout = 120
-        playercreep.Timeout = 120
+        creep.Timeout = 120 * mul
+        playercreep.Timeout = 120 * mul
     end
 end)
