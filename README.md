@@ -48,13 +48,13 @@
 
     - Speed Up = 
 
-    - Tears Down = 
+    - Tears Down = Enemy projectiles have a chance to lose effects --done
 
-    - Tears Up = 
+    - Tears Up = Enemy projectiles have a chance to gain extra effects --done
 
-    - Luck Down = Enemy projectiles have a chance to lose effects --done
+    - Luck Down = Adds chance for slot/beggar's rewards to get removed -- done
 
-    - Luck Up = Enemy projectiles have a chance to gain extra effects --done
+    - Luck Up = Adds chance for slot/beggas's rewards to get upgraded/duplicated --done
 
     - Telepills = Teleports all enemies in a room to a different room --done
         - Horse Pill = Teleports the enemies out of the game (automatic room clear) --done
@@ -112,8 +112,8 @@
 
     - Friends Till The End! = Flies spawn after an enemy is killed --done
 
-    - X-Lax = Creates a pool of slippery brown creep under every enemy. If you stand in it, you get +1 damage and +1.5 fire rate like Tainted Blue Baby. The creep synergizes with other poops if it's in contact with them also like Tainted Blue Baby and IBS 
-        - Horse Pill = The creep lasts twice as long
+    - X-Lax = Creates a pool of slippery brown creep under every enemy. If you stand in it, you get +1 damage and +1.5 fire rate like Tainted Blue Baby. The creep synergizes with other poops if it's in contact with them also like Tainted Blue Baby and IBS --done
+        - Horse Pill = The creep lasts twice as long --done
 
     - Something's wrong... = A pool of black creep spawns under every enemy that slows down Isaac and enemies --done
         - Horse Pill = The creep lasts twice as long --done

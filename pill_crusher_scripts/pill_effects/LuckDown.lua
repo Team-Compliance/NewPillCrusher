@@ -1,45 +1,42 @@
-local ClearableProjectileFlags = {
-    ProjectileFlags.SMART,
-    ProjectileFlags.EXPLODE,
-    ProjectileFlags.ACID_GREEN,
-    ProjectileFlags.GOO,
-    ProjectileFlags.GHOST,
-    ProjectileFlags.WIGGLE,
-    ProjectileFlags.BOOMERANG,
-    ProjectileFlags.ACID_RED,
-    ProjectileFlags.GREED,
-    ProjectileFlags.RED_CREEP,
-    ProjectileFlags.CREEP_BROWN,
-    ProjectileFlags.BURST,
-    ProjectileFlags.BURST3,
-    ProjectileFlags.BURST8,
-    ProjectileFlags.SHIELDED,
-    ProjectileFlags.CHANGE_FLAGS_AFTER_TIMEOUT,
-    ProjectileFlags.FIRE_SPAWN,
-    ProjectileFlags.GODHEAD
-}
+local checkForPrize = true
 
 
----@param projectile EntityProjectile
-local function OnProjectileUpdate(_, projectile)
-    if projectile.FrameCount ~= 1 then return end
-
+local function OnUpdate()
     local luckUpCrushed = PillCrusher:GetCrushedPillNum(PillEffect.PILLEFFECT_LUCK_UP)
     local luckDownCrushed = PillCrusher:GetCrushedPillNum(PillEffect.PILLEFFECT_LUCK_DOWN)
 
     local luckDownStacks = math.max(0, luckDownCrushed - luckUpCrushed)
 
-    local rng = RNG()
-    rng:SetSeed(projectile.InitSeed, 35)
+    if luckDownStacks == 0 then return end
 
-    if rng:RandomInt(100) < luckDownStacks * 10 then
-        for _, projectileFlag in ipairs(ClearableProjectileFlags) do
-            projectile:ClearProjectileFlags(projectileFlag)
+    if checkForPrize then
+        local pickups = Isaac.FindByType(EntityType.ENTITY_PICKUP)
+
+        for _, pickup in ipairs(pickups) do
+            if pickup.FrameCount == 0 then
+                local rng = RNG()
+                rng:SetSeed(pickup.InitSeed, 35)
+
+                if rng:RandomInt(100) < 10 * luckDownStacks then
+                    pickup:Remove()
+                end
+            end
         end
-        projectile.Color = Color(1, 1, 1)
+
+        checkForPrize = false
+    end
+
+    local slots = Isaac.FindByType(EntityType.ENTITY_SLOT)
+
+    for _, slot in ipairs(slots) do
+        local slotSpr = slot:GetSprite()
+
+        if slotSpr:IsEventTriggered("Prize") then
+            checkForPrize = true
+        end
     end
 end
-PillCrusher:AddCallback(ModCallbacks.MC_POST_PROJECTILE_UPDATE, OnProjectileUpdate)
+PillCrusher:AddCallback(ModCallbacks.MC_POST_UPDATE, OnUpdate)
 
 
 PillCrusher:AddPillCrusherEffect(PillEffect.PILLEFFECT_LUCK_DOWN, "Luck Down")
