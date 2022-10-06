@@ -80,7 +80,8 @@
     - Lemon Party = Yellow creep spawns under every enemy. Damages enemies and the player --done
         - Horse Pill = The creep lasts twice as long --done
 
-    - R U a wizard? =
+    - R U a wizard? = Makes enemies target random spots in the room --done
+        - Horse Pill = The effect lasts twice as long --done
 
     - Percs! = Enemies take half damage --done
         - Horse Pill = Nothing?
