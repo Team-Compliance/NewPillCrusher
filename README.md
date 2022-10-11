@@ -1,6 +1,6 @@
 # To-do list
 - Pill Crusher rework
-  - ??? pills get their names revealed after using the item on them. Splash text also appears when a pill is crushed --done
+  - Splash text appears when a pill is crushed and its name was aleady revealed beforehand --done
   - Upon using Pill Crusher, a dust particle effect plays and there's an animation of it crushing --done
   - Endless Nameless synergy = Has a 25% chance of creating a duplicate pill after use --done
 
