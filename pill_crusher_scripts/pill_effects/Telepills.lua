@@ -1,9 +1,16 @@
 local Helpers = require("pill_crusher_scripts.Helpers")
 
-local json = require("json")
--- local PillCrusher.MonsterTeleTable = {}
--- local PillCrusher.teleRooms = {}
--- local PillCrusher.levelSize
+
+local TeleportAnimFrames = {
+	{Scale = Vector(0.9, 1.1), Offset = Vector(0, 9)},
+	{Scale = Vector(0.9, 1.1), Offset = Vector(0, 9)},
+	{Scale = Vector(1.4, 0.6), Offset = Vector(0, -23)},
+	{Scale = Vector(1.4, 0.6), Offset = Vector(0, -23)},
+	{Scale = Vector(1.8, 0.5), Offset = Vector(0, -23)},
+	{Scale = Vector(0.5, 2.2), Offset = Vector(0, 27)},
+	{Scale = Vector(0.3, 3), Offset = Vector(0, 27)},
+	{Scale = Vector(0.1, 8), Offset = Vector(0, 31)},
+}
 
 
 local function AddRedRoom(i)
@@ -12,12 +19,7 @@ local function AddRedRoom(i)
 end
 
 
--- local function GetRoomsSize()
--- 	return PillCrusher.teleRooms
--- end
-
-
-local function GetTeleRooms(cleared)
+local function GetTeleRooms()
 	local level = Game():GetLevel()
 	local rooms = level:GetRooms()
 	local startroom, endroom = 0, rooms.Size - 1
@@ -64,6 +66,22 @@ local function NewTeleRoom()
 					enemy:MakeChampion(v.Seed,v.ChampionIDX,true)
 				end
 				enemy.HitPoints = v.HP
+
+				local data = Helpers.GetData(enemy)
+				data.PrevTeleportEntityColl = enemy.EntityCollisionClass
+				data.PrevTeleportGridColl = enemy.GridCollisionClass
+				data.TeleFrames = #TeleportAnimFrames
+				data.IsTeleportingBack = true
+
+				enemy:AddEntityFlags(EntityFlag.FLAG_FREEZE)
+				enemy.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+				enemy.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+				local sprite = enemy:GetSprite()
+				data.OriginalScale = sprite.Scale
+				data.OriginalOffset = sprite.Offset
+				sprite.Scale = Vector(0, sprite.Offset.Y * 100)
+
+				SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL2,1,0)
 			end
 		end
 	end
@@ -100,67 +118,39 @@ PillCrusher:AddCallback(ModCallbacks.MC_USE_ITEM, RedRoomExpansion, CollectibleT
 PillCrusher:AddCallback(ModCallbacks.MC_USE_CARD, RedRoomExpansion, Card.CARD_CRACKED_KEY)
 
 
--- function SaveRun(_, save)
--- 	if save then
--- 		local toSave = {Monsters = PillCrusher.MonsterTeleTable, Rooms = PillCrusher.teleRooms, Size = PillCrusher.levelSize}
--- 		PillCrusher:SaveData(json.encode(toSave))
--- 	end
--- end
--- PillCrusher:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveRun)
-
-
--- function LoadRun(_, continue)
--- 	if continue and PillCrusher:HasData() then
--- 		local load = json.decode(PillCrusher:LoadData())
--- 		PillCrusher.MonsterTeleTable = load.Monsters
--- 		PillCrusher.teleRooms = load.Rooms
--- 		PillCrusher.levelSize = load.Size
--- 	else
--- 		PillCrusher.MonsterTeleTable = {}
--- 		PillCrusher.teleRooms = GetTeleRooms()
--- 	end
--- end
--- PillCrusher:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, LoadRun)
-
-
+---@param npc EntityNPC
 local function TeleportMonsterAnim(_, npc)
 	local data = Helpers.GetData(npc)
     if not data or not data.TeleFrames then return end
 	local sprite = npc:GetSprite()
-	local originScale = sprite.Scale
-	local originOffset = sprite.Offset
+	local originScale = data.OriginalScale
+	local originOffset = data.OriginalOffset
 	local room = Game():GetRoom()
 
-    if data.TeleFrames == 0 or data.TeleFrames == 1 then
-        sprite.Offset = Vector(originOffset.X, originOffset.Y + 9)
-        sprite.Scale = Vector(originScale.X * 0.9, originScale.Y * 1.1)
-    end
-    if data.TeleFrames == 2 or data.TeleFrames == 3 then
-        sprite.Offset = Vector(originOffset.X, originOffset.Y - 23)
-        sprite.Scale = Vector(originScale.X * 1.4, originScale.Y * 0.6)
-    end
-    if data.TeleFrames == 3 then
-        sprite.Offset = Vector(originOffset.X, originOffset.Y - 23)
-        sprite.Scale = Vector(originScale.X * 1.4, originScale.Y * 0.6)
-    end
-    if data.TeleFrames == 4 then
-        sprite.Offset = Vector(originOffset.X, originOffset.Y - 23)
-        sprite.Scale = Vector(originScale.X * 1.8, originScale.Y * 0.5)
-    end
-    if data.TeleFrames == 5 then
-        sprite.Offset = Vector(originOffset.X, originOffset.Y + 27)
-        sprite.Scale = Vector(originScale.X * 0.5, originScale.Y * 2.2)
-    end
-    if data.TeleFrames == 6 then
-        sprite.Offset = Vector(originOffset.X, originOffset.Y + 27)
-        sprite.Scale = Vector(originScale.X * 0.3, originScale.Y * 3.0)
-    end
-    if data.TeleFrames == 7 then
-        sprite.Offset = Vector(originOffset.X, originOffset.Y + 31)
-        sprite.Scale = Vector(originScale.X * 0.1, originScale.Y * 8)
-    end
-    if data.TeleFrames >= 8 then
-        sprite.Scale = Vector(0, originScale.Y * 100)
+	if data.TeleFrames % 2 == 0 then
+		if data.TeleFrames % 4 == 0 then
+			sprite.Color = Color(0,0,0,1)
+		else
+			sprite.Color = Color(1,1,1,1,1,1,1)
+		end
+	end
+
+	local currentFrame = TeleportAnimFrames[math.floor(data.TeleFrames/2)]
+
+	if currentFrame then
+		---@diagnostic disable-next-line: assign-type-mismatch
+		npc.SpriteScale = currentFrame.Scale
+		---@diagnostic disable-next-line: assign-type-mismatch
+		sprite.Offset = originOffset + currentFrame.Offset
+	end
+
+	if data.IsTeleportingBack then
+		data.TeleFrames = data.TeleFrames - 1
+	else
+    	data.TeleFrames = data.TeleFrames + 1
+	end
+
+	if data.TeleFrames > #TeleportAnimFrames*2 then
 		if not data.WasHorseTelePilled then
 			local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 
@@ -174,16 +164,20 @@ local function TeleportMonsterAnim(_, npc)
 
 			table.insert(PillCrusher.MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints, RoomIDX = idx.ListIDX})
 		end
-        npc:Remove()
-    end
 
-    if data.TeleFrames % 2 == 0 then
-        sprite.Color = Color(0,0,0,1)
-    else
-        sprite.Color = Color(1,1,1,1,1,1,1)
-    end
+		npc:Remove()
+	end
 
-    data.TeleFrames = data.TeleFrames + 1
+	if data.TeleFrames <= 0 then
+		npc.EntityCollisionClass = data.PrevTeleportEntityColl
+		npc.GridCollisionClass = data.PrevTeleportGridColl
+		npc:ClearEntityFlags(EntityFlag.FLAG_FREEZE)
+		npc.Color = Color(1, 1, 1)
+		data.TeleFrames = nil
+		data.IsTeleportingBack = nil
+		sprite.Offset = originOffset
+		--sprite.Scale = originScale
+	end
 
     if not Game():IsPaused() then
         sprite:Update()
@@ -199,9 +193,11 @@ function (_, _, _, isHorse)
         enemy.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
         enemy.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
         local data = Helpers.GetData(enemy)
-		data.TeleFrames = 0
+		data.TeleFrames = 1
 		data.WasHorseTelePilled = isHorse
+		data.OriginalScale = enemy:GetSprite().Scale
+		data.OriginalOffset = enemy:GetSprite().Offset
     end
 
-    SFXManager():Play(SoundEffect.SOUND_TELEPILLS,1,0)
+    SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL1,1,0)
 end)

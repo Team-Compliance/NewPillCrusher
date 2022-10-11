@@ -55,10 +55,9 @@ local function OnNPCUpdate(_, npc)
 
     if data.LargerTimer ~= 0 then return end
 
+    npc.Scale = data.InitialScale
     data.LargerTimer = nil
     data.InitialScale = nil
-    npc:ClearEntityFlags(EntityFlag.FLAG_SHRINK)
-    npc.Scale = data.InitialScale
 end
 PillCrusher:AddCallback(ModCallbacks.MC_NPC_UPDATE, OnNPCUpdate)
 

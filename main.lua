@@ -200,16 +200,16 @@ function mod:UsePillCrusher(_, rng, player)
 			if truePillColor > PillColor.PILL_GIANT_FLAG then
 				pillColorToCheckEffect = FiendFolio.savedata.run.PillCopies[tostring(truePillColor-PillColor.PILL_GIANT_FLAG)]
 				pillEffect = itemPool:GetPillEffect(pillColorToCheckEffect, player)
-				FiendFolio.savedata.run.IdentifiedRunPills[tostring(pillColorToCheckEffect)] = true
+				--FiendFolio.savedata.run.IdentifiedRunPills[tostring(pillColorToCheckEffect)] = true
 			else
 				pillColorToCheckEffect = FiendFolio.savedata.run.PillCopies[tostring(truePillColor)]
 				pillEffect = itemPool:GetPillEffect(pillColorToCheckEffect, player)
-				FiendFolio.savedata.run.IdentifiedRunPills[tostring(pillColorToCheckEffect)] = true
+				--FiendFolio.savedata.run.IdentifiedRunPills[tostring(pillColorToCheckEffect)] = true
 			end
 		end
 	end
 
-	itemPool:IdentifyPill(pillColorToCheckEffect)
+	local showName = itemPool:IsPillIdentified(pillColorToCheckEffect)
 
 	if pillEffect == PillEffect.PILLEFFECT_VURP and PillCrusher.LastPillUsed >= 0 then
 		pillEffect = PillCrusher.LastPillUsed
@@ -247,8 +247,15 @@ function mod:UsePillCrusher(_, rng, player)
 		PillCrusher.CrushedPillsRoom[pillEffect] = 1 * mult
 	end
 
-	SFXManager():Play(SoundEffect.SOUND_BONE_BREAK)
-	Game():GetHUD():ShowItemText(name, "")
+	if isHorse then
+		SFXManager():Play(SoundEffect.SOUND_BONE_SNAP)
+	else
+		SFXManager():Play(SoundEffect.SOUND_BONE_BREAK)
+	end
+
+	if showName then
+		Game():GetHUD():ShowItemText(name, "")
+	end
 	local poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, 0, player.Position, Vector.Zero, nil)
 	poof.Color = Color(1, 1, 1, 1, 0.5, 0.5, 0.5)
 	poof.SpriteScale = Vector(0.6, 0.6)
@@ -294,7 +301,7 @@ function mod:spawnPill(rng, pos)
 	local spawned = false
 	for i=0, Game():GetNumPlayers()-1 do
 		local player = Isaac.GetPlayer(i)
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER) and rng:RandomInt(3)+1 == 1 and not spawned then
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_PILL_CRUSHER) and rng:RandomInt(100) < 15 and not spawned then
 			local pill = Isaac.Spawn(5, 70, 0, spawnposition, Vector.Zero, player)
 			if player:HasCollectible(CollectibleType.COLLECTIBLE_CONTRACT_FROM_BELOW) then
 				Isaac.Spawn(5, 70, pill.SubType, spawnposition, Vector.Zero, player)

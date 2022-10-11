@@ -56,7 +56,7 @@ function (_, rng, _, isHorse)
         if rng:RandomInt(100) < 30 then
             local subtype = HeartSubType.HEART_FULL
 
-            if rng:RandomInt(100) < 10 or isHorse then
+            if rng:RandomInt(100) < 40 or isHorse then
                 for _, specialHeartEntity in ipairs(SpecialHearts) do
                     if enemy.Type == specialHeartEntity.type and enemy.Variant == specialHeartEntity.variant then
                         subtype = specialHeartEntity.heart
