@@ -65,7 +65,6 @@ PillCrusher:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, NewTeleRoom)
 
 
 local function CleanRoom()
-	print("Cleared")
     local level = Game():GetLevel()
 	local currentRoomIndex = level:GetCurrentRoomDesc().ListIndex
 	local newMonsterTeleTable = {}
