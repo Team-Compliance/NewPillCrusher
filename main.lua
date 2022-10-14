@@ -339,29 +339,6 @@ end
 mod:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, mod.DefaultWispInit, FamiliarVariant.WISP)
 
 
-local function GetTeleRooms(cleared)
-	local level = Game():GetLevel()
-	local rooms = level:GetRooms()
-	local startroom, endroom = 0, rooms.Size - 1
-	levelSize = rooms.Size
-	local roomsTable = {}
-	if level:GetStageType() == StageType.STAGETYPE_REPENTANCE then
-		if level:GetAbsoluteStage() == LevelStage.STAGE2_2 then
-			endroom = endroom - 8
-		end
-	end
-	for i = startroom, endroom do
-		if rooms:Get(i).Data.Type ~= RoomType.ROOM_ANGEL and rooms:Get(i).Data.Type ~= RoomType.ROOM_DEVIL
-		and rooms:Get(i).Data.Type ~= RoomType.ROOM_BOSS and rooms:Get(i).Data.Type ~= RoomType.ROOM_BOSSRUSH then
-			local isMirror = level:GetAbsoluteStage() == LevelStage.STAGE1_2 and level:GetStageType() == StageType.STAGETYPE_REPENTANCE and (i > (endroom + 1) / 2)
-			table.insert(roomsTable,{ListIDX = rooms:Get(i).ListIndex, IsMirror = isMirror})
-		end
-	end
-
-	return roomsTable
-end
-
-
 function mod:SaveRun(save)
 	if save then
 		local toSave = {
@@ -382,13 +359,11 @@ function mod:LoadRun(continue)
 		local load = json.decode(PillCrusher:LoadData())
 		PillCrusher.LastPillUsed = load.LastPillUsed
 		PillCrusher.MonsterTeleTable = load.Monsters
-		PillCrusher.teleRooms = load.Rooms
 		PillCrusher.levelSize = load.Size
 		PillCrusher.HPUpDownEnemies = load.HPUpDownEnemies
 	else
 		PillCrusher.LastPillUsed = -1
 		PillCrusher.MonsterTeleTable = {}
-		PillCrusher.teleRooms = GetTeleRooms()
 		PillCrusher.HPUpDownEnemies = {}
 	end
 end

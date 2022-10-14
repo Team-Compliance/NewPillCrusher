@@ -1,6 +1,5 @@
 local Helpers = require("pill_crusher_scripts.Helpers")
 
-
 local TeleportAnimFrames = {
 	{Scale = Vector(0.9, 1.1), Offset = Vector(0, 9)},
 	{Scale = Vector(0.9, 1.1), Offset = Vector(0, 9)},
@@ -13,76 +12,50 @@ local TeleportAnimFrames = {
 }
 
 
-local function AddRedRoom(i)
-	local room = Game():GetRoom()
-	table.insert(PillCrusher.teleRooms, {ListIDX = i, IsMirror = room:IsMirrorWorld()})
-end
-
-
-local function GetTeleRooms()
-	local level = Game():GetLevel()
-	local rooms = level:GetRooms()
-	local startroom, endroom = 0, rooms.Size - 1
-	PillCrusher.levelSize = rooms.Size
-	local roomsTable = {}
-	if level:GetStageType() == StageType.STAGETYPE_REPENTANCE then
-		if level:GetAbsoluteStage() == LevelStage.STAGE2_2 then
-			endroom = endroom - 8
-		end
-	end
-	for i = startroom, endroom do
-		if rooms:Get(i).Data.Type ~= RoomType.ROOM_ANGEL and rooms:Get(i).Data.Type ~= RoomType.ROOM_DEVIL
-		and rooms:Get(i).Data.Type ~= RoomType.ROOM_BOSS and rooms:Get(i).Data.Type ~= RoomType.ROOM_BOSSRUSH then
-			local isMirror = level:GetAbsoluteStage() == LevelStage.STAGE1_2 and level:GetStageType() == StageType.STAGETYPE_REPENTANCE and (i > (endroom + 1) / 2)
-			table.insert(roomsTable,{ListIDX = rooms:Get(i).ListIndex, IsMirror = isMirror})
-		end
-	end
-
-	return roomsTable
-end
-
-
 local function NewTeleLevel()
 	PillCrusher.MonsterTeleTable = {}
-	PillCrusher.teleRooms = GetTeleRooms()
 end
 PillCrusher:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, NewTeleLevel)
 
 
 local function NewTeleRoom()
+	if #PillCrusher.MonsterTeleTable <= 0 then return end
+
 	local roomIDX = Game():GetLevel():GetCurrentRoomDesc().ListIndex
 	local room = Game():GetRoom()
-	if #PillCrusher.MonsterTeleTable > 0 then
-		for k,v in ipairs(PillCrusher.MonsterTeleTable) do
-			if v.RoomIDX == roomIDX then
-				local spawnpos = room:FindFreeTilePosition(room:GetRandomPosition(20), 10)
-				if v.SpawnPos == nil then
-					PillCrusher.MonsterTeleTable[k].SpawnPos = spawnpos
-				else
-					spawnpos = v.SpawnPos
-				end
-				local enemy = Game():Spawn(v.Type,v.Variant,spawnpos,Vector.Zero,nil,v.SubType,v.Seed):ToNPC()
-				if v.ChampionIDX ~= -1 then
-					enemy:MakeChampion(v.Seed,v.ChampionIDX,true)
-				end
-				enemy.HitPoints = v.HP
 
-				local data = Helpers.GetData(enemy)
-				data.PrevTeleportEntityColl = enemy.EntityCollisionClass
-				data.PrevTeleportGridColl = enemy.GridCollisionClass
-				data.TeleFrames = #TeleportAnimFrames
-				data.IsTeleportingBack = true
+	for index, teleMonster in ipairs(PillCrusher.MonsterTeleTable) do
+		if teleMonster.RoomIDX == roomIDX then
+			local spawnpos = room:FindFreeTilePosition(room:GetRandomPosition(20), 10)
 
-				enemy:AddEntityFlags(EntityFlag.FLAG_FREEZE)
-				enemy.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-				enemy.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
-				local sprite = enemy:GetSprite()
-				data.OriginalScale = sprite.Scale
-				data.OriginalOffset = sprite.Offset
-				sprite.Scale = Vector(0, sprite.Offset.Y * 100)
-
-				SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL2,1,0)
+			if teleMonster.SpawnPos == nil then
+				PillCrusher.MonsterTeleTable[index].SpawnPos = spawnpos
+			else
+				spawnpos = teleMonster.SpawnPos
 			end
+
+			local enemy = Game():Spawn(teleMonster.Type, teleMonster.Variant, spawnpos, Vector.Zero, nil, teleMonster.SubType, teleMonster.Seed):ToNPC()
+
+			if teleMonster.ChampionIDX ~= -1 then
+				enemy:MakeChampion(teleMonster.Seed, teleMonster.ChampionIDX,true)
+			end
+
+			enemy.HitPoints = teleMonster.HitPoints
+
+			local data = Helpers.GetData(enemy)
+			data.PrevTeleportEntityColl = enemy.EntityCollisionClass
+			data.PrevTeleportGridColl = enemy.GridCollisionClass
+			data.TeleFrames = #TeleportAnimFrames + 20
+			data.IsTeleportingBack = true
+
+			enemy:AddEntityFlags(EntityFlag.FLAG_FREEZE)
+			enemy.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+			enemy.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+			local sprite = enemy:GetSprite()
+			data.OriginalScale = Vector(sprite.Scale.X, sprite.Scale.Y)
+			data.OriginalOffset = Vector(sprite.Offset.X, sprite.Offset.Y)
+
+			enemy.Visible = false
 		end
 	end
 end
@@ -103,29 +76,19 @@ end
 PillCrusher:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, CleanRoom)
 
 
-function RedRoomExpansion()
-	local level = Game():GetLevel()
-	local rooms = level:GetRooms()
-	if PillCrusher.levelSize < rooms.Size then
-		for i = PillCrusher.levelSize, rooms.Size - 1 do
-			AddRedRoom(i)
-		end
-		PillCrusher.levelSize = rooms.Size
-	end
-end
-PillCrusher:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, RedRoomExpansion)
-PillCrusher:AddCallback(ModCallbacks.MC_USE_ITEM, RedRoomExpansion, CollectibleType.COLLECTIBLE_RED_KEY)
-PillCrusher:AddCallback(ModCallbacks.MC_USE_CARD, RedRoomExpansion, Card.CARD_CRACKED_KEY)
-
-
 ---@param npc EntityNPC
 local function TeleportMonsterAnim(_, npc)
 	local data = Helpers.GetData(npc)
     if not data or not data.TeleFrames then return end
 	local sprite = npc:GetSprite()
-	local originScale = data.OriginalScale
-	local originOffset = data.OriginalOffset
-	local room = Game():GetRoom()
+	local originScale = Vector(data.OriginalScale.X, data.OriginalScale.Y)
+	local originOffset = Vector(data.OriginalOffset.X, data.OriginalOffset.Y)
+
+
+	if data.TeleFrames == #TeleportAnimFrames*2 then
+		SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL2,1,0)
+		npc.Visible = true
+	end
 
 	if data.TeleFrames % 2 == 0 then
 		if data.TeleFrames % 4 == 0 then
@@ -139,7 +102,7 @@ local function TeleportMonsterAnim(_, npc)
 
 	if currentFrame then
 		---@diagnostic disable-next-line: assign-type-mismatch
-		npc.SpriteScale = currentFrame.Scale
+		npc.SpriteScale = originScale * currentFrame.Scale
 		---@diagnostic disable-next-line: assign-type-mismatch
 		sprite.Offset = originOffset + currentFrame.Offset
 	end
@@ -151,21 +114,40 @@ local function TeleportMonsterAnim(_, npc)
 	end
 
 	if data.TeleFrames > #TeleportAnimFrames*2 then
-		if not data.WasHorseTelePilled then
-			local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
+		if data.IsTeleportingBack then
+			npc.Visible = false
+		else
+			if not data.WasHorseTelePilled then
+				local rng = Isaac.GetPlayer():GetCollectibleRNG(CollectibleType.COLLECTIBLE_PILL_CRUSHER)
 
-			local idx = nil
-			while idx == nil do
-				idx = PillCrusher.teleRooms[rng:RandomInt(#PillCrusher.teleRooms) + 1]
-				if room:IsMirrorWorld() ~= idx.IsMirror or idx.ListIDX == Game():GetLevel():GetCurrentRoomDesc().ListIndex then
-					idx = nil
+				local level = Game():GetLevel()
+				local currentRoomIndex = level:GetCurrentRoomDesc().SafeGridIndex
+				local possibleTeleRooms = {}
+
+				--Get all current rooms in current dimension
+				for i = 0, 168, 1 do
+					local roomDesc = level:GetRoomByIdx(i)
+
+					if i ~= currentRoomIndex and i ~= 84 and roomDesc.Data and roomDesc.SafeGridIndex == i then
+						possibleTeleRooms[#possibleTeleRooms+1] = roomDesc.ListIndex
+					end
 				end
+
+				local chosenTeleroom = possibleTeleRooms[rng:RandomInt(#possibleTeleRooms) + 1]
+
+				table.insert(PillCrusher.MonsterTeleTable, {
+					RoomIDX = chosenTeleroom,
+					Type = npc.Type,
+					Variant = npc.Variant,
+					SubType = npc.SubType,
+					ChampionIDX = npc:GetChampionColorIdx(),
+					Seed = npc.InitSeed,
+					HitPoints = npc.HitPoints
+				})
 			end
 
-			table.insert(PillCrusher.MonsterTeleTable,{Type = npc.Type, Variant = npc.Variant, SubType = npc.SubType, ChampionIDX = npc:GetChampionColorIdx(), Seed = npc.InitSeed, HP = npc.HitPoints, RoomIDX = idx.ListIDX})
+			npc:Remove()
 		end
-
-		npc:Remove()
 	end
 
 	if data.TeleFrames <= 0 then
@@ -175,8 +157,8 @@ local function TeleportMonsterAnim(_, npc)
 		npc.Color = Color(1, 1, 1)
 		data.TeleFrames = nil
 		data.IsTeleportingBack = nil
-		sprite.Offset = originOffset
-		--sprite.Scale = originScale
+		sprite.Offset = Vector(data.OriginalOffset.X, data.OriginalOffset.Y)
+		sprite.Scale = Vector(data.OriginalScale.X, data.OriginalScale.Y)
 	end
 
     if not Game():IsPaused() then
