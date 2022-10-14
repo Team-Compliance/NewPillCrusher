@@ -5,7 +5,7 @@ local IsAmnesiaPillCrusherHorsePilled = false
 local AmnesiaSafeTimer = 0
 
 
-function OnUpdate()
+local function OnUpdate()
     if not IsAmnesiaPillCrusherActivated then return end
     if AmnesiaSafeTimer <= 0 then return end
     AmnesiaSafeTimer = AmnesiaSafeTimer - 1
@@ -13,7 +13,7 @@ end
 PillCrusher:AddCallback(ModCallbacks.MC_POST_UPDATE, OnUpdate)
 
 
-function OnNPCUpdate(_, npc)
+local function OnNPCUpdate(_, npc)
     if not IsAmnesiaPillCrusherActivated then return end
     local data = Helpers.GetData(npc)
     if not data then return end
@@ -33,7 +33,7 @@ local function IsPlayerPressingShootingInputs(player)
 end
 
 
-function OnPlayerUpdate(_, player)
+local function OnPlayerUpdate(_, player)
     if not IsAmnesiaPillCrusherActivated then return end
     if AmnesiaSafeTimer > 0 then return end
     if not IsPlayerPressingShootingInputs(player) then return end

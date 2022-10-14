@@ -56,6 +56,8 @@ local function NewTeleRoom()
 			data.OriginalOffset = Vector(sprite.Offset.X, sprite.Offset.Y)
 
 			enemy.Visible = false
+
+			room:SetClear(false)
 		end
 	end
 end
@@ -63,17 +65,33 @@ PillCrusher:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, NewTeleRoom)
 
 
 local function CleanRoom()
+	print("Cleared")
     local level = Game():GetLevel()
-	local i = 1
-	while i <= #PillCrusher.MonsterTeleTable do
-		if PillCrusher.MonsterTeleTable[i].RoomIDX == level:GetCurrentRoomDesc().ListIndex then
-			table.remove(PillCrusher.MonsterTeleTable,i)
-		else
-			i = i + 1
+	local currentRoomIndex = level:GetCurrentRoomDesc().ListIndex
+	local newMonsterTeleTable = {}
+
+	for _, teleMonster in ipairs(PillCrusher.MonsterTeleTable) do
+		if teleMonster.RoomIDX ~= currentRoomIndex then
+			newMonsterTeleTable[#newMonsterTeleTable+1] = teleMonster
 		end
 	end
+
+	PillCrusher.MonsterTeleTable = newMonsterTeleTable
 end
-PillCrusher:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, CleanRoom)
+
+
+local wasClear = true
+local function OnUpdate()
+	local room = Game():GetRoom()
+	local isClear = room:IsClear()
+
+	if not wasClear and isClear then
+		CleanRoom()
+	end
+
+	wasClear = isClear
+end
+PillCrusher:AddCallback(ModCallbacks.MC_POST_UPDATE, OnUpdate)
 
 
 ---@param npc EntityNPC
